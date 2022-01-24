@@ -447,7 +447,7 @@
                 },
                 "identifier_category" : {
                   "type" : "string",
-                  "enum" : [ "UNIPROT", "RFAM", "CCD" ],
+                  "enum" : [ "UNIPROT", "RFAM", "CCD", "SMILES", "INCHI", "INCHIKEY" ],
                   "description" : "Category of the identifier",
                   "example" : "UNIPROT"
                 },
@@ -465,33 +465,7 @@
                   }
                 }
               },
-              "required" : [ "description", "chain_ids" ]
-            }
-          },
-          "ligands" : {
-            "type" : "array",
-            "description" : "A list of the ligands in the model",
-            "items" : {
-              "type" : "object",
-              "properties" : {
-                "identifier" : {
-                  "type" : "string",
-                  "description" : "Identifier of the ligand",
-                  "example" : "IMQLKJBTEOYOSI-GPIVLXJGSA-N"
-                },
-                "identifier_category" : {
-                  "type" : "string",
-                  "enum" : [ "PDB HET CODE", "SMILES", "INCHI", "INCHIKEY" ],
-                  "description" : "Category of the identifier",
-                  "example" : "INCHIKEY"
-                },
-                "description" : {
-                  "type" : "string",
-                  "description" : "A textual label of the ligand",
-                  "example" : "INOSITOL HEXAKISPHOSPHATE"
-                }
-              },
-              "required" : [ "description" ]
+              "required" : [ "entity_type description", "identifier", "identifier_category chain_ids" ]
             }
           },
           "chains" : {
