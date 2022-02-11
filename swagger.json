@@ -73,7 +73,7 @@
           "required" : false,
           "schema" : {
             "type" : "string",
-            "enum" : [ "swissmodel", "genome3d", "foldx", "pdb", "ped", "modelarchive"]
+            "enum" : [ "swissmodel", "genome3d", "foldx", "pdb", "ped", "modelarchive" ]
           },
           "explode" : true
         }, {
@@ -132,7 +132,7 @@
           "required" : false,
           "schema" : {
             "type" : "string",
-            "enum" : [ "swissmodel", "genome3d", "foldx", "pdb", "ped", "modelarchive"]
+            "enum" : [ "swissmodel", "genome3d", "foldx", "pdb", "ped", "modelarchive" ]
           },
           "explode" : true
         }, {
