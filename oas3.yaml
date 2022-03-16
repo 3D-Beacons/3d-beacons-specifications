@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: 0.2.0
+  version: 0.2.1
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -144,11 +144,8 @@ paths:
         '501': 
           description: If endpoint is not implemented
 servers:
-  - url: 'https://3dbeacons.org/{basePath}'
+  - url: 'https://3dbeacons.org'
     description: 3D Beacons server
-    variables:
-      basePath:
-        default: uniprot
 components:
   schemas:
     result:
@@ -312,10 +309,10 @@ components:
                                 type: string
                                 description: 'Sequence of the model'
                               from:
-                                type: integer
+                                type: string
                                 description: 'Residue number of the first residue'
                               to:
-                                type: integer
+                                type: string
                                 description: 'Residue number of the last residue'
                             required: [
                               aligned_sequence,
@@ -369,7 +366,7 @@ components:
             required: [
               provider,
               created,
-              identity,
+              sequence_identity,
               oligo_state,
               coverage,
               coordinates_url,
