@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: 0.7.0
+  version: 1.0.0
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -416,9 +416,14 @@ components:
                 description: 'Atomic coordinates or dummy atoms'
                 enum: [
                   'ATOMIC',
-                  'DUMMY'
+                  'DUMMY',
+                  'MIX'
                   ]
                 example: 'ATOMIC'
+              model_page_url:
+                type: string
+                description: 'URL of a web page of the data provider that show the model'
+                example: 'https://alphafold.ebi.ac.uk/entry/Q5VSL9'
               provider:
                 type: string
                 description: 'Name of the model provider'
@@ -431,6 +436,23 @@ components:
                         'SASBDB',
                         'AlphaFold DB'
                   ]
+              number_of_conformers:
+                type: number
+                description: 'The number of conformers in a conformational ensemble'
+                example: 42
+              ensemble_sample_url:
+                type: string
+                description: 'URL of a sample of conformations from a conformational ensemble'
+                example: 'https://proteinensemble.org/api/ensemble_sample/PED00001e001'
+              ensemble_sample_format:
+                type: string
+                description: 'File format of the sample coordinates, e.g. PDB'
+                enum: [
+                        'PDB',
+                        'MMCIF',
+                        'BCIF'
+                      ]
+                example: 'PDB'
               created:
                 type: string
                 description: 'Date of release of model generation in the format of YYYY-MM-DD'
@@ -471,15 +493,19 @@ components:
                   'FLUORESCENCE TRANSFER',
                   'INFRARED SPECTROSCOPY',
                   'NEUTRON DIFFRACTION',
-                  'POWDER DIFFRACTION',
+                  'X-RAY POWDER DIFFRACTION',
                   'SOLID-STATE NMR',
                   'SOLUTION NMR',
-                  'SOLUTION SCATTERING',
+                  'X-RAY SOLUTION SCATTERING',
                   'THEORETICAL MODEL',
                   'X-RAY DIFFRACTION',
                   'HYBRID'
                   ]
                 description: 'Experimental method used to determine the structure, if applicable'
+              confidence_type:
+                type: string
+                description: 'Type of the confidence measure'
+                example: 'QMEAN'
               confidence_version:
                 type: string
                 description: 'Version of confidence measure software used to calculate quality'
@@ -764,9 +790,14 @@ components:
                 description: 'Atomic coordinates or dummy atoms'
                 enum: [
                   'ATOMIC',
-                  'DUMMY'
+                  'DUMMY',
+                  'MIX'
                   ]
                 example: 'ATOMIC'
+              model_page_url:
+                type: string
+                description: 'URL of a web page of the data provider that show the model'
+                example: 'https://alphafold.ebi.ac.uk/entry/Q5VSL9'
               provider:
                 type: string
                 description: 'Name of the model provider'
@@ -780,6 +811,23 @@ components:
                         'AlphaFold DB'
                   ]
                 example: 'PED'
+              number_of_conformers:
+                type: number
+                description: 'The number of conformers in a conformational ensemble'
+                example: 42
+              ensemble_sample_url:
+                type: string
+                description: 'URL of a sample of conformations from a conformational ensemble'
+                example: 'https://proteinensemble.org/api/ensemble_sample/PED00001e001'
+              ensemble_sample_format:
+                type: string
+                description: 'File format of the sample coordinates, e.g. PDB'
+                enum: [
+                        'PDB',
+                        'MMCIF',
+                        'BCIF'
+                      ]
+                example: 'PDB'
               created:
                 type: string
                 description: 'Date of release of model generation in the format of YYYY-MM-DD'
@@ -815,10 +863,10 @@ components:
                   'FLUORESCENCE TRANSFER',
                   'INFRARED SPECTROSCOPY',
                   'NEUTRON DIFFRACTION',
-                  'POWDER DIFFRACTION',
+                  'X-RAY POWDER DIFFRACTION',
                   'SOLID-STATE NMR',
                   'SOLUTION NMR',
-                  'SOLUTION SCATTERING',
+                  'X-RAY SOLUTION SCATTERING',
                   'THEORETICAL MODEL',
                   'X-RAY DIFFRACTION',
                   'HYBRID'
@@ -829,6 +877,10 @@ components:
                 format: float
                 description: 'The resolution of the model in Angstrom, if applicable'
                 example: 1.4
+              confidence_type:
+                type: string
+                description: 'Type of the confidence measure'
+                example: 'QMEAN'
               confidence_version:
                 type: string
                 description: 'Version of confidence measure software used to calculate quality'
@@ -842,6 +894,7 @@ components:
               model_identifier,
               model_category,
               model_url,
+              model_format,
               provider,
               created,
               sequence_identity,
@@ -918,6 +971,19 @@ components:
                         'BCIF'
                       ]
                 example: 'PDB'
+              model_type:
+                type: string
+                description: 'Atomic coordinates or dummy atoms'
+                enum: [
+                  'ATOMIC',
+                  'DUMMY',
+                  'MIX'
+                  ]
+                example: 'ATOMIC'
+              model_page_url:
+                type: string
+                description: 'URL of a web page of the data provider that show the model'
+                example: 'https://alphafold.ebi.ac.uk/entry/Q5VSL9'
               provider:
                 type: string
                 description: 'Name of the model provider'
@@ -931,6 +997,23 @@ components:
                         'AlphaFold DB'
                   ]
                 example: 'PDBe'
+              number_of_conformers:
+                type: number
+                description: 'The number of conformers in a conformational ensemble'
+                example: 42
+              ensemble_sample_url:
+                type: string
+                description: 'URL of a sample of conformations from a conformational ensemble'
+                example: 'https://proteinensemble.org/api/ensemble_sample/PED00001e001'
+              ensemble_sample_format:
+                type: string
+                description: 'File format of the sample coordinates, e.g. PDB'
+                enum: [
+                        'PDB',
+                        'MMCIF',
+                        'BCIF'
+                      ]
+                example: 'PDB'
               created:
                 type: string
                 description: 'Date of release of model generation in the format of YYYY-MM-DD'
@@ -956,6 +1039,10 @@ components:
                 format: float
                 description: 'The resolution of the model in Angstrom, if applicable'
                 example: 2.1
+              confidence_type:
+                type: string
+                description: 'Type of the confidence measure'
+                example: 'QMEAN'
               confidence_version:
                 type: string
                 description: 'Version of confidence measure software used to calculate quality'
