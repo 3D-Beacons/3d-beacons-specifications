@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: 1.0.0
+  version: 1.0.1
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -708,6 +708,7 @@ components:
               model_identifier,
               model_category,
               model_url,
+              model_format,
               provider,
               created,
               sequence_identity,
@@ -1056,6 +1057,7 @@ components:
               model_identifier,
               model_category,
               model_url,
+              model_format,
               provider
               ]
       required: [
