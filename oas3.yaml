@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: "0.1.0"
+  version: 0.2.0
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -24,6 +24,7 @@ paths:
             enum:
               - swissmodel
               - genome3d
+              - foldx
               - pdb
           explode: true
         - name: template
@@ -75,6 +76,7 @@ paths:
             enum:
               - swissmodel
               - genome3d
+              - foldx
               - pdb
           explode: true
         - name: template
@@ -119,6 +121,7 @@ paths:
             enum:
               - swissmodel
               - genome3d
+              - foldx
               - pdb
           explode: true
         - name: template
@@ -151,84 +154,88 @@ components:
     result:
       type: object
       properties:
-        uniprot_entries:
-          type: array
-          items:
-            type: object
-            properties:
-              sequence_length:
-                type: integer
-              ac:
-                type: string
-              id:
-                type: string
+        uniprot_entry:
+          type: object
+          description: 'Information on the UniProt accession the data corresponds to'
+          properties:
+            uniprot_md5:
+              type: string
+              description: 'MD5 hash of the UniProt sequence'
+            sequence_length:
+              type: integer
+              description: 'Length of the UniProt sequence, e.g. 100'
+            ac:
+              type: string
+              description: 'UniProt accession, e.g. P00520'
+            id:
+              type: string
+              description: 'UniProt identifier, e.g. ABL1_MOUSE'
+          required: [
+            sequence_length,
+            ac,
+            id
+            ]
         structures:
           type: array
+          description: 'Information on the structures available for the UniProt accession'
           items:
             type: object
             properties:
+              model_identifier:
+                type: string
+                description: 'Identifier of the model, e.g. a PDB id'
+              provider:
+                type: string
+                description: 'Name of the model provider'
               created:
                 type: string
-              
-              identity:
+                description: 'Datetime stamp in the format of yyyy/mm/dd hh:mm:ss'
+              sequence_identity:
                 type: number
-              similarity:
-                type: number
-              oligo-state:
+                format: float
+                description: 'Sequence identity of the model to the UniProt sequence'
+              oligo_state:
                 type: string
+                description: 'Oligomeric state of the model, e.g. monomer'
+              preferred_assembly_id:
+                type: string
+                description: 'Identifier of the preferred assembly in the model'
               coverage:
                 type: number
-              
+                format: float
+                description: 'Percentage of the UniProt sequence covered by the model'
               qmean_version:
                 type: string
+                description: 'Version of QMEAN used to calculate quality'
               qmean_avg_local_score:
                 type: number
-
-              coordinates:
+                format: float
+                description: 'Average of the local QMEAN scores'
+              coordinates_url:
                 type: string
-
-
-              pubmed_ids:
-                type: array
-                items:
-                  type: string
+                description: 'URL of the model coordinates'
               in_complex_with:
                 type: array
+                description: 'Information on any macromolecules in complex with the protein of interest'
                 items:
                   type: object
                   properties:
                     chain_id:
                       type: string
-                    description:
+                      description: 'Chain identifier of the macromolecule'
+                    name:
                       type: string
-                    interacting_PDB_residues:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          residue_label:
-                            type: string
-                          residue_index:
-                            type: string
-              bound_ligands:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    chain_id:
+                      description: 'Name of the macromolecule'
+                    id:
                       type: string
-                    description:
+                      description: 'UniProt identifier, e.g. ABL1_MOUSE'
+                    ac:
                       type: string
-                    interacting_PDB_residues:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          residue_label:
-                            type: string
-                          residue_index:
-                            type: string
-                            
+                      description: 'UniProt accession, e.g. P00520'
+                  required: [
+                    chain_id,
+                    name
+                    ]
               chains:
                 type: array
                 items:
@@ -241,55 +248,134 @@ components:
                       items:
                         type: object
                         properties:
-                          template:
-                            type: object
-                            properties:
-                              last_updated:
-                                type: string
-                              provider:
-                                type: string
-                              experimental_method:
-                                type: string
-                              resolution:
-                                type: number
-                              preferred_assembly_id:
-                                type: number
-                            
+                          templates:
+                            type: array
+                            description: 'Information on the template(s) used for the model'
+                            items:
+                              type: object
+                              properties:
+                                template_id:
+                                  type: string
+                                  description: 'Identifier of the templates, e.g. PDB id'
+                                chain_id:
+                                  type: string
+                                  description: 'Identifier of the chain of the template'
+                                template_sequence_identity:
+                                  type: number
+                                  format: float
+                                  description: 'Sequence identity of the template with the UniProt accession'
+                                last_updated:
+                                  type: string
+                                  description: 'Date stamp in the format of yyyy/mm/dd'
+                                provider:
+                                  type: string
+                                  description: 'Provider of the template, e.g. PDB'
+                                experimental_method:
+                                  type: string
+                                  enum: [
+                                    'ELECTRON CRYSTALLOGRAPHY',
+                                    'ELECTRON MICROSCOPY',
+                                    'EPR',
+                                    'FIBER DIFFRACTION',
+                                    'FLUORESCENCE TRANSFER',
+                                    'INFRARED SPECTROSCOPY',
+                                    'NEUTRON DIFFRACTION',
+                                    'POWDER DIFFRACTION',
+                                    'SOLID-STATE NMR',
+                                    'SOLUTION NMR',
+                                    'SOLUTION SCATTERING',
+                                    'THEORETICAL MODEL',
+                                    'X-RAY DIFFRACTION'
+                                    ]
+                                  description: 'Experimental method used to determine the template'
+                                resolution:
+                                  type: number
+                                  format: float
+                                  description: 'Resolution of the template'
+                                preferred_assembly_id:
+                                  type: string
+                                  description: 'Identifier of the preferred assembly of the template'
+                              required: [
+                                template_id,
+                                chain_id,
+                                last_updated,
+                                provider, 
+                                experimental_method, 
+                                resolution,
+                                template_sequence_identity
+                                ]
                           seqres:
                             type: object
+                            description: 'Information on the sequence of the model'
                             properties:
                               aligned_sequence:
                                 type: string
-                              description:
-                                type: string
+                                description: 'Sequence of the model'
                               from:
                                 type: integer
+                                description: 'Residue number of the first residue'
                               to:
                                 type: integer
+                                description: 'Residue number of the last residue'
+                            required: [
+                              aligned_sequence,
+                              from,
+                              to
+                              ]
                           uniprot:
                             type: object
                             properties:
-                              uniprot_md5:
-                                type: string
                               aligned_sequence:
                                 type: string
-                              description:
-                                type: string
+                                description: 'Sequence of the UniProt accession'
                               from:
                                 type: integer
+                                description: 'Residue number of the first residue'
                               to:
                                 type: integer
+                                description: 'Residue number of the last residue'
+                            required: [
+                              aligned_sequence,
+                              from,
+                              to
+                              ]
                           residues: 
                             type: array
                             items:
                               type: object
                               properties:
-                                residue:
-                                  type: object
-                                  properties:
-                                    qmean: 
-                                      type: number
-                                    pdb_resnum:
-                                      type: integer
-                                    uniprot_resnum:
-                                      type: integer
+                                qmean: 
+                                  type: number
+                                  format: float
+                                  description: 'QMEAN score'
+                                model_residue_label:
+                                  type: string
+                                  description: 'Model residue index'
+                                uniprot_residue_number:
+                                  type: integer
+                                  description: 'UniProt residue index'
+                              required: [
+                                model_residue_label,
+                                uniprot_residue_number
+                                ]
+                        required: [
+                          seqres,
+                          uniprot,
+                          residues
+                          ]
+                  required: [
+                    chain_id
+                    ]
+            required: [
+              provider,
+              created,
+              identity,
+              oligo_state,
+              coverage,
+              coordinates_url,
+              chains
+              ]
+      required: [
+        uniprot_entry,
+        structures
+        ]
