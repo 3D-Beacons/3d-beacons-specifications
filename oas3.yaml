@@ -1,8 +1,8 @@
 info:
-  title: ELIXIR 3D Beacons API
+  title: 3D Beacons API
   version: 1.3.0
   description: >-
-    OpenAPI 3 description of ELIXIR 3D-Beacons service. The service returns a
+    OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
     UniProtKB Accession. This is version 1.3.0
 openapi: 3.0.1
