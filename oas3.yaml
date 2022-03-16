@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: 0.5.1
+  version: 0.5.2
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -185,7 +185,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/results'
+                type: array
+                items:
+                  $ref: '#/components/schemas/result'
   '/interpro/summary/{accession}.json':
     get:
       parameters:
@@ -225,7 +227,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/multiple_summary'
+                type: array
+                items:
+                  $ref: '#/components/schemas/summary'
   '/pfam/{accession}.json':
     get:
       parameters:
@@ -264,7 +268,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/results'
+                type: array
+                items:
+                  $ref: '#/components/schemas/result'
   '/pfam/summary/{accession}.json':
     get:
       parameters:
@@ -304,7 +310,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/multiple_summary'
+                type: array
+                items:
+                  $ref: '#/components/schemas/summary'
 servers:
   - url: 'https://3dbeacons.org'
     description: 3D Beacons server
@@ -329,40 +337,12 @@ components:
             id:
               type: string
               description: 'UniProt identifier, e.g. ABL1_MOUSE'
-            interpro_matches:
-              type: array
-              description: 'InterPro accessions matching the UniProt'
-              items:
-                type: object
-                properties:
-                  accession:
-                    type: string
-                    description: 'InterPro accession matching the UniProt accession'
-                  start:
-                    type: number
-                    format: integer
-                    description: 'The index of the first residue of the InterPro match'
-                  end:
-                    type: number
-                    format: integer
-                    description: 'The index of the last residue of the InterPro match'
-            pfam_matches:
-              type: array
-              description: 'Pfam accessions matching the UniProt'
-              items:
-                type: object
-                properties:
-                  accession:
-                    type: string
-                    description: 'Pfam accession matching the UniProt accession'
-                  start:
-                    type: number
-                    format: integer
-                    description: 'The index of the first residue of the Pfam match'
-                  end:
-                    type: number
-                    format: integer
-                    description: 'The index of the last residue of the Pfam match'
+            segment_start:
+              type: integer
+              description: 'Index of the first residue of the UniProt sequence segment, e.g. 1'
+            segment_end:
+              type: integer
+              description: 'Index of the last residue of the UniProt sequence segment, e.g. 42'
           required: [
             ac
             ]
@@ -626,41 +606,12 @@ components:
             id:
               type: string
               description: 'UniProt identifier, e.g. ABL1_MOUSE'
-            interpro_matches:
-              type: array
-              description: 'InterPro accessions matching the UniProt'
-              items:
-                type: object
-                properties:
-                  accession:
-                    type: string
-                    description: 'InterPro accession matching the UniProt accession'
-                  start:
-                    type: number
-                    format: integer
-                    description: 'The index of the first residue of the InterPro match'
-                  end:
-                    type: number
-                    format: integer
-                    description: 'The index of the last residue of the InterPro match'
-            pfam_matches:
-              type: array
-              description: 'Pfam accessions matching the UniProt'
-              items:
-                type: object
-                properties:
-                  accession:
-                    type: string
-                    description: 'Pfam accession matching the UniProt accession'
-                  start:
-                    type: number
-                    format: integer
-                    description: 'The index of the first residue of the Pfam match'
-                  end:
-                    type: number
-                    format: integer
-                    description: 'The index of the last residue of the Pfam match'
-
+            segment_start:
+              type: integer
+              description: 'Index of the first residue of the UniProt sequence segment, e.g. 1'
+            segment_end:
+              type: integer
+              description: 'Index of the last residue of the UniProt sequence segment, e.g. 42'
           required: [
             ac
             ]
@@ -747,14 +698,6 @@ components:
         uniprot_entry,
         structures
         ]
-    results:
-      type: array
-      items:
-        $ref: '#/components/schemas/result'
-    multiple_summary:
-      type: array
-      items:
-        $ref: '#/components/schemas/summary'
     pdb_summary:
       type: object
       properties:
