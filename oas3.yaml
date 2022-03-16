@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: 0.5.2
+  version: 0.6.0
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -41,7 +41,7 @@ paths:
           required: false
           schema:
             type: string
-            pattern: '^[0-9]+-[0-9]+$'
+            pattern: '^[1-9]+-[0-9]+$'
       responses:
         '200':
           description: >-
@@ -313,6 +313,31 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/summary'
+  '/pdbe-kb/annotations/uniprot/{accession}.json':
+    get:
+      parameters:
+        - name: accession
+          description: UniProtKB accession number (AC)
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: range
+          description: Specify a UniProt sequence residue range
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: '^[0-9]+-[0-9]+$'
+      responses:
+        '200':
+          description: >-
+            Response includes query parameter, UniProt sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unp_annotations'
 servers:
   - url: 'https://3dbeacons.org'
     description: 3D Beacons server
@@ -614,7 +639,7 @@ components:
               description: 'Index of the last residue of the UniProt sequence segment, e.g. 42'
           required: [
             ac
-            ]
+          ]
         structures:
           type: array
           description: 'Information on the structures available for the UniProt accession'
@@ -803,3 +828,119 @@ components:
         pdb_entry,
         structures
         ]
+    unp_annotations:
+      type: object
+      description: 'Contains annotations for a UniProt accession'
+      required: 
+        - accession
+        - sequence
+      properties:
+        accession:
+          type: string
+          description: 'A UniProt accession'
+          example: 'P00734'
+        id:
+          type: string
+          description: 'A UniProt identifier'
+          example: 'FGFR2_HUMAN'
+        sequence:
+          type: string
+          description: 'The sequence of the protein'
+          example: 'AFFGVAATRKL'
+        uniprot_md5:
+              type: string
+              description: 'MD5 hash of the UniProt sequence, i.e. version'
+              example: '8A25E1DA88208FCF'
+        ligand:
+          type: array
+          description: 'Contains ligand annotations'
+          items:
+            type: object
+            required: [
+              type,
+              description,
+              begin,
+              end
+              ]
+            properties:
+              type:
+                type: string
+                description: 'The type of the annotation'
+                enum: [
+                  'NP_BIND',
+                  'BINDING',
+                  'METAL'
+                  ]
+                example: 'METAL'
+              description:
+                type: string
+                description: 'A label for the annotation'
+                example: 'ATP'
+              start:
+                type: number
+                format: integer
+                description: 'The first position of the annotation'
+                example: 487
+              end:
+                type: number
+                format: integer
+                description: 'The last position of the annotation'
+                example: 495
+        secondary_structure: 
+          type: array
+          items:
+            type: object
+            description: 'Contains secondary structure annotations'
+            required: [
+              type,
+              start,
+              end
+              ]
+            properties:
+              type: 
+                type: string
+                description: 'Type of the secondary structure element'
+                enum: [
+                  'HELIX',
+                  'SHEET',
+                  'COIL'
+                  ]
+                example: 'HELIX'
+              start:
+                type: number
+                format: integer
+                description: 'The first position of the annotation'
+                example: 23
+              end:
+                type: number
+                format: integer
+                description: 'The last position of the annotation'
+                example: 42
+        feature: 
+          type: array
+          items:
+            type: object
+            description: 'Contains feature annotations'
+            required: [
+              type,
+              start,
+              end
+              ]
+            properties:
+              type: 
+                type: string
+                description: 'Type of the annotation'
+                enum: [
+                  'ACTIVE_SITE',
+                  ]
+                example: 'ACTIVE_SITE'
+              start:
+                type: number
+                format: integer
+                description: 'The first position of the annotation'
+                example: 23
+              end:
+                type: number
+                format: integer
+                description: 'The last position of the annotation'
+                example: 42
