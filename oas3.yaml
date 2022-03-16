@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: 0.6.1
+  version: 0.7.0
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -350,24 +350,30 @@ components:
           type: object
           description: 'Information on the UniProt accession the data corresponds to'
           properties:
+            ac:
+              type: string
+              description: 'UniProt accession'
+              example: 'P00520'
+            id:
+              type: string
+              description: 'UniProt identifier'
+              example: 'ABL1_MOUSE'
             uniprot_md5:
               type: string
               description: 'MD5 hash of the UniProt sequence'
+              example: '5F9BA1D4C7DE6925'
             sequence_length:
               type: integer
-              description: 'Length of the UniProt sequence, e.g. 100'
-            ac:
-              type: string
-              description: 'UniProt accession, e.g. P00520'
-            id:
-              type: string
-              description: 'UniProt identifier, e.g. ABL1_MOUSE'
+              description: 'Length of the UniProt sequence'
+              example: 76
             segment_start:
               type: integer
-              description: 'Index of the first residue of the UniProt sequence segment, e.g. 1'
+              description: 'Index of the first residue of the UniProt sequence segment'
+              example: 2
             segment_end:
               type: integer
-              description: 'Index of the last residue of the UniProt sequence segment, e.g. 42'
+              description: 'Index of the last residue of the UniProt sequence segment'
+              example: 86
           required: [
             ac
             ]
@@ -379,72 +385,124 @@ components:
             properties:
               model_identifier:
                 type: string
-                description: 'Identifier of the model, e.g. PDB id'
+                description: 'Identifier of the model such as PDB id'
+                example: '1cbs'
               model_category:
                 type: string
-                description: 'Category of the model, e.g. EXPERIMENTALLY DETERMINED'
+                description: 'Category of the model'
                 enum: [
                         'EXPERIMENTALLY DETERMINED',
                         'TEMPLATE-BASED',
-                        'TEMPLATE-FREE'
+                        'AB-INITIO',
+                        'CONFORMATIONAL ENSEMBLE',
+                        'DEEP-LEARNING'
                       ]
+                example: 'DEEP-LEARNING'
               model_url:
                 type: string
                 description: 'URL of the model coordinates'
+                example: 'https://www.ebi.ac.uk/pdbe/static/entry/1t29_updated.cif'
               model_format:
                 type: string
-                description: 'File format of the coordinates, e.g. PDB'
+                description: 'File format of the coordinates'
                 enum: [
                         'PDB',
                         'MMCIF',
                         'BCIF'
                       ]
+                example: 'PDB'
+              model_type:
+                type: string
+                description: 'Atomic coordinates or dummy atoms'
+                enum: [
+                  'ATOMIC',
+                  'DUMMY'
+                  ]
+                example: 'ATOMIC'
               provider:
                 type: string
-                description: 'Name of the model provider, e.g. Swiss-Model'
+                description: 'Name of the model provider'
                 enum: [
-                        'PDBE',
-                        'SWISSMODEL',
-                        'GENOME3D',
-                        'FOLDX'
+                        'PDBe',
+                        'SWISS-MODEL',
+                        'Genome3D',
+                        'FoldX',
+                        'PED',
+                        'SASBDB',
+                        'AlphaFold DB'
                   ]
               created:
                 type: string
                 description: 'Date of release of model generation in the format of YYYY-MM-DD'
                 pattern: '^[1-2][9|0][0-9]{2}-[0-1][0-9]-[0-3][0-9]$'
+                example: '2000-12-31' 
               sequence_identity:
                 type: number
                 format: float
-                description: 'Sequence identity of the model to the UniProt sequence, e.g. 90%'
+                description: 'Sequence identity of the model to the UniProt sequence'
+                example: 0.9
               uniprot_start:
                 type: number
                 format: integer
-                description: 'The index of the first residue of the model according to UniProt sequence numbering, e.g. 1'
+                description: 'The index of the first residue of the model according to UniProt sequence numbering'
+                example: 2
               uniprot_end:
                 type: number
                 format: integer
-                description: 'The index of the last residue of the model according to UniProt sequence numbering, e.g. 142'
+                description: 'The index of the last residue of the model according to UniProt sequence numbering'
+                example: 2323
               coverage:
                 type: number
                 format: float
-                description: 'Percentage of the UniProt sequence covered by the model, e.g. 42%'
+                description: 'Percentage of the UniProt sequence covered by the model'
+                example: 0.98
               resolution:
                 type: number
                 format: float
-                description: 'The resolution of the model in Angstrom, if applicable, e.g. 2.1'
-              qmean_version:
+                description: 'The resolution of the model in Angstrom, if applicable'
+                example: 2.9
+              experimental_method:
                 type: string
-                description: 'Version of QMEAN used to calculate quality'
-              qmean_avg_local_score:
+                enum: [
+                  'ELECTRON CRYSTALLOGRAPHY',
+                  'ELECTRON MICROSCOPY',
+                  'EPR',
+                  'FIBER DIFFRACTION',
+                  'FLUORESCENCE TRANSFER',
+                  'INFRARED SPECTROSCOPY',
+                  'NEUTRON DIFFRACTION',
+                  'POWDER DIFFRACTION',
+                  'SOLID-STATE NMR',
+                  'SOLUTION NMR',
+                  'SOLUTION SCATTERING',
+                  'THEORETICAL MODEL',
+                  'X-RAY DIFFRACTION',
+                  'HYBRID'
+                  ]
+                description: 'Experimental method used to determine the structure, if applicable'
+              confidence_version:
+                type: string
+                description: 'Version of confidence measure software used to calculate quality'
+                example: 'v1.0.2'
+              confidence_avg_local_score:
                 type: number
                 format: float
-                description: 'Average of the local QMEAN scores, i.e. the average model quality'
+                description: 'Average of the confidence measures, i.e. QMEAN or pLDDT'
+                example: 0.95
               oligo_state:
                 type: string
-                description: 'Oligomeric state of the model, e.g. monomer'
+                description: 'Oligomeric state of the model'
+                enum: [
+                  'MONOMER',
+                  'HOMODIMER',
+                  'HETERODIMER',
+                  'HOMO-OLIGOMER',
+                  'HETERO-OLIGOMER']
+                example: 'MONOMER'
               preferred_assembly_id:
                 type: string
                 description: 'Identifier of the preferred assembly in the model'
+                example: '1A'
               in_complex_with:
                 type: array
                 description: 'Information on any macromolecules in complex with the protein of interest'
@@ -453,16 +511,20 @@ components:
                   properties:
                     chain_id:
                       type: string
-                      description: 'Chain identifier of the macromolecule, e.g. A'
+                      description: 'Chain identifier of the macromolecule'
+                      example: 'A'
                     name:
                       type: string
                       description: 'Name of the macromolecule'
+                      example: 'Calpain'
                     id:
                       type: string
-                      description: 'UniProt identifier, e.g. ABL1_MOUSE'
+                      description: 'UniProt identifier'
+                      example: 'ABL1_MOUSE'
                     ac:
                       type: string
-                      description: 'UniProt accession, e.g. P00520'
+                      description: 'UniProt accession'
+                      example: 'P00520'
                   required: [
                     chain_id,
                     name
@@ -487,21 +549,26 @@ components:
                               properties:
                                 template_id:
                                   type: string
-                                  description: 'Identifier of the templates, e.g. PDB id'
+                                  description: 'Identifier of the template'
+                                  example: '2aqa'
                                 chain_id:
                                   type: string
                                   description: 'Identifier of the chain of the template'
+                                  example: 'C'
                                 template_sequence_identity:
                                   type: number
                                   format: float
                                   description: 'Sequence identity of the template with the UniProt accession'
+                                  example: 0.97
                                 last_updated:
                                   type: string
                                   description: 'Date of release of the last update in the format of YYYY-MM-DD'
                                   pattern: '^[1-2][9|0][0-9]{2}-[0-1][0-9]-[0-3][0-9]$'
+                                  example: '2021-08-06'
                                 provider:
                                   type: string
-                                  description: 'Provider of the template, e.g. PDB'
+                                  description: 'Provider of the template'
+                                  example: 'PDB'
                                 experimental_method:
                                   type: string
                                   enum: [
@@ -521,13 +588,16 @@ components:
                                     'HYBRID'
                                     ]
                                   description: 'Experimental method used to determine the template'
+                                  example: 'HYBRID'
                                 resolution:
                                   type: number
                                   format: float
-                                  description: 'Resolution of the template'
+                                  description: 'Resolution of the template, in Angstrom'
+                                  example: '2.1'
                                 preferred_assembly_id:
                                   type: string
                                   description: 'Identifier of the preferred assembly of the template'
+                                  example: '1'
                               required: [
                                 template_id,
                                 chain_id,
@@ -544,12 +614,15 @@ components:
                               aligned_sequence:
                                 type: string
                                 description: 'Sequence of the model'
+                                example: 'AAGTGHLKKKYT...'
                               from:
                                 type: string
                                 description: 'Residue number of the first residue'
+                                example: 32
                               to:
                                 type: string
                                 description: 'Residue number of the last residue'
+                                example: 976
                             required: [
                               aligned_sequence,
                               from,
@@ -561,12 +634,15 @@ components:
                               aligned_sequence:
                                 type: string
                                 description: 'Sequence of the UniProt accession'
+                                example: 'AAGTGHLKKKYTAAGTGHLKKKYT...'
                               from:
                                 type: integer
                                 description: 'Residue number of the first residue'
+                                example: 23
                               to:
                                 type: integer
                                 description: 'Residue number of the last residue'
+                                example: 868
                             required: [
                               aligned_sequence,
                               from,
@@ -577,16 +653,19 @@ components:
                             items:
                               type: object
                               properties:
-                                qmean: 
+                                confidence: 
                                   type: number
                                   format: float
-                                  description: 'QMEAN score'
+                                  description: 'Confidence score'
+                                  example: 0.99
                                 model_residue_label:
                                   type: string
                                   description: 'Model residue index'
+                                  example: 1
                                 uniprot_residue_number:
                                   type: integer
                                   description: 'UniProt residue index'
+                                  example: 1
                               required: [
                                 model_residue_label,
                                 uniprot_residue_number
@@ -619,27 +698,33 @@ components:
           type: object
           description: 'Information on the UniProt accession the data corresponds to'
           properties:
-            uniprot_md5:
-              type: string
-              description: 'MD5 hash of the UniProt sequence, i.e. identifies the sequence'
-            sequence_length:
-              type: integer
-              description: 'Length of the UniProt sequence, e.g. 100 amino acids'
             ac:
               type: string
-              description: 'UniProt accession, e.g. P00520'
+              description: 'UniProt accession'
+              example: 'P00520'
             id:
               type: string
-              description: 'UniProt identifier, e.g. ABL1_MOUSE'
+              description: 'UniProt identifier'
+              example: 'ABL1_MOUSE'
+            uniprot_md5:
+              type: string
+              description: 'MD5 hash of the UniProt sequence'
+              example: '5F9BA1D4C7DE6925'
+            sequence_length:
+              type: integer
+              description: 'Length of the UniProt sequence'
+              example: 76
             segment_start:
               type: integer
-              description: 'Index of the first residue of the UniProt sequence segment, e.g. 1'
+              description: 'Index of the first residue of the UniProt sequence segment'
+              example: 2
             segment_end:
               type: integer
-              description: 'Index of the last residue of the UniProt sequence segment, e.g. 42'
+              description: 'Index of the last residue of the UniProt sequence segment'
+              example: 86
           required: [
             ac
-          ]
+            ]
         structures:
           type: array
           description: 'Information on the structures available for the UniProt accession'
@@ -648,68 +733,111 @@ components:
             properties:
               model_identifier:
                 type: string
-                description: 'Identifier of the model, e.g. PDB id'
+                description: 'Identifier of the model, such as PDB id'
+                example: '8kfa'
               model_category:
                 type: string
-                description: 'Category of the model, e.g. EXPERIMENTALLY DETERMINED'
+                description: 'Category of the model'
                 enum: [
                         'EXPERIMENTALLY DETERMINED',
                         'TEMPLATE-BASED',
-                        'TEMPLATE-FREE',
-                        'CONFORMATIONAL ENSEMBLE'
+                        'AB-INITIO',
+                        'CONFORMATIONAL ENSEMBLE',
+                        'DEEP-LEARNING'
                       ]
+                example: 'TEMPLATE-BASED'
               model_url:
                 type: string
                 description: 'URL of the model coordinates'
+                example: 'https://www.ebi.ac.uk/pdbe/static/entry/1t29_updated.cif'
               model_format:
                 type: string
-                description: 'File format of the coordinates, e.g. PDB'
+                description: 'File format of the coordinates'
                 enum: [
                         'PDB',
                         'MMCIF',
                         'BCIF'
                       ]
+                example: 'MMCIF'
+              model_type:
+                type: string
+                description: 'Atomic coordinates or dummy atoms'
+                enum: [
+                  'ATOMIC',
+                  'DUMMY'
+                  ]
+                example: 'ATOMIC'
               provider:
                 type: string
-                description: 'Name of the model provider, e.g. Swiss-Model'
+                description: 'Name of the model provider'
                 enum: [
-                        'PDBE',
-                        'SWISSMODEL',
-                        'GENOME3D',
-                        'FOLDX',
-                        'PED'
+                        'PDBe',
+                        'SWISS-MODEL',
+                        'Genome3D',
+                        'FoldX',
+                        'PED',
+                        'SASBDB',
+                        'AlphaFold DB'
                   ]
+                example: 'PED'
               created:
                 type: string
                 description: 'Date of release of model generation in the format of YYYY-MM-DD'
                 pattern: '^[1-2][9|0][0-9]{2}-[0-1][0-9]-[0-3][0-9]$'
+                example: '2021-12-21'
               sequence_identity:
                 type: number
                 format: float
-                description: 'Sequence identity (0 to 1) of the model to the UniProt sequence, e.g. 0.9 for 90%'
+                description: 'Sequence identity (0 to 1) of the model to the UniProt sequence'
+                example: 0.97
               uniprot_start:
                 type: number
                 format: integer
-                description: 'The index of the first residue of the model according to UniProt sequence numbering, e.g. 1'
+                description: 'The index of the first residue of the model according to UniProt sequence numbering'
+                example: 1
               uniprot_end:
                 type: number
                 format: integer
-                description: 'The index of the last residue of the model according to UniProt sequence numbering, e.g. 142'
+                description: 'The index of the last residue of the model according to UniProt sequence numbering'
+                example: 142
               coverage:
                 type: number
                 format: float
-                description: 'Percentage (0 to 1) of the UniProt sequence covered by the model, e.g. 0.42 for 42%'
+                description: 'Percentage (0 to 1) of the UniProt sequence covered by the model'
+                example: 0.4
+              experimental_method:
+                type: string
+                enum: [
+                  'ELECTRON CRYSTALLOGRAPHY',
+                  'ELECTRON MICROSCOPY',
+                  'EPR',
+                  'FIBER DIFFRACTION',
+                  'FLUORESCENCE TRANSFER',
+                  'INFRARED SPECTROSCOPY',
+                  'NEUTRON DIFFRACTION',
+                  'POWDER DIFFRACTION',
+                  'SOLID-STATE NMR',
+                  'SOLUTION NMR',
+                  'SOLUTION SCATTERING',
+                  'THEORETICAL MODEL',
+                  'X-RAY DIFFRACTION',
+                  'HYBRID'
+                  ]
+                description: 'Experimental method used to determine the structure, if applicable'
               resolution:
                 type: number
                 format: float
-                description: 'The resolution of the model in Angstrom, if applicable, e.g. 2.1'
-              qmean_version:
+                description: 'The resolution of the model in Angstrom, if applicable'
+                example: 1.4
+              confidence_version:
                 type: string
-                description: 'Version of QMEAN used to calculate quality'
-              qmean_avg_local_score:
+                description: 'Version of confidence measure software used to calculate quality'
+                example: 'v1.0.2'
+              confidence_avg_local_score:
                 type: number
                 format: float
-                description: 'Average of the local QMEAN scores, i.e. the average model quality'
+                description: 'Average of the confidence measures, i.e. QMEAN or pLDDT'
+                example: 0.95
             required: [
               model_identifier,
               model_category,
@@ -732,19 +860,26 @@ components:
           properties:
             entry_id:
               type: string
-              description: 'PDB entry identifier, e.g. 3BOW'
+              description: 'PDB entry identifier'
+              example: '3bow'
             chain_id:
               type: string
-              description: 'PDB chain identifier, e.g. A'
+              description: 'PDB chain identifier'
+              example: 'A'
             mapped_uniprot:
               type: string
               description: 'UniProt accession mapped to the PDB entry'
+              example: 'P12345'
             uniprot_start:
               type: number
-              description: 'The index of the first residue in the mapped UniProt, e.g. 1'
+              format: integer
+              description: 'The index of the first residue in the mapped UniProt'
+              example: 1
             uniprot_end:
               type: number
-              description: 'The index of the last residue in the mapped UniProt, e.g. 100'
+              format: integer
+              description: 'The index of the last residue in the mapped UniProt'
+              example: 100
           required: [
             entry_id,
             chain_id
@@ -757,19 +892,23 @@ components:
             properties:
               model_identifier:
                 type: string
-                description: 'Identifier of the model, e.g. PDB id or Swiss-Model id'
+                description: 'Identifier of the model, such as PDB id or SWISS-MODEL id'
+                example: '3bow'
               model_category:
                 type: string
-                description: 'Category of the model, e.g. EXPERIMENTALLY DETERMINED'
+                description: 'Category of the model'
                 enum: [
                         'EXPERIMENTALLY DETERMINED',
                         'TEMPLATE-BASED',
-                        'TEMPLATE-FREE',
-                        'CONFORMATIONAL ENSEMBLE'
+                        'AB-INITIO',
+                        'CONFORMATIONAL ENSEMBLE',
+                        'DEEP-LEARNING'
                       ]
+                example: 'EXPERIMENTALLY DETERMINED'
               model_url:
                 type: string
                 description: 'URL of the model coordinates'
+                example: 'https://www.ebi.ac.uk/pdbe/static/entry/1t29_updated.cif'
               model_format:
                 type: string
                 description: 'File format of the coordinates, e.g. PDB'
@@ -778,51 +917,59 @@ components:
                         'MMCIF',
                         'BCIF'
                       ]
+                example: 'PDB'
               provider:
                 type: string
-                description: 'Name of the model provider, e.g. Swiss-Model'
+                description: 'Name of the model provider'
                 enum: [
-                        'PDBE',
-                        'SWISSMODEL',
-                        'GENOME3D',
-                        'FOLDX',
-                        'PED'
+                        'PDBe',
+                        'SWISS-MODEL',
+                        'Genome3D',
+                        'FoldX',
+                        'PED',
+                        'SASBDB',
+                        'AlphaFold DB'
                   ]
+                example: 'PDBe'
               created:
                 type: string
                 description: 'Date of release of model generation in the format of YYYY-MM-DD'
                 pattern: '^[1-2][9|0][0-9]{2}-[0-1][0-9]-[0-3][0-9]$'
+                example: '1986-12-06'
               uniprot_start:
                 type: number
                 format: integer
-                description: 'The index of the first residue of the model according to UniProt sequence numbering, e.g. 1'
+                description: 'The index of the first residue of the model according to UniProt sequence numbering'
+                example: 1
               uniprot_end:
                 type: number
                 format: integer
-                description: 'The index of the last residue of the model according to UniProt sequence numbering, e.g. 142'
+                description: 'The index of the last residue of the model according to UniProt sequence numbering'
+                example: 142
               coverage:
                 type: number
                 format: float
-                description: 'Percentage (0 to 1) of the UniProt sequence covered by the model, e.g. 0.42 for 42%'
+                description: 'Percentage (0 to 1) of the UniProt sequence covered by the model'
+                example: 0.42
               resolution:
                 type: number
                 format: float
-                description: 'The resolution of the model in Angstrom, if applicable, e.g. 2.1'
-              qmean_version:
+                description: 'The resolution of the model in Angstrom, if applicable'
+                example: 2.1
+              confidence_version:
                 type: string
-                description: 'Version of QMEAN used to calculate quality'
-              qmean_avg_local_score:
+                description: 'Version of confidence measure software used to calculate quality'
+                example: 'v1.0.2'
+              confidence_avg_local_score:
                 type: number
                 format: float
-                description: 'Average of the local QMEAN scores, i.e. the average model quality'
+                description: 'Average of the confidence measures, i.e. QMEAN or pLDDT'
+                example: 0.95
             required: [
               model_identifier,
               model_category,
               model_url,
-              provider,
-              created,
-              sequence_identity,
-              coverage
+              provider
               ]
       required: [
         pdb_entry,
@@ -847,55 +994,39 @@ components:
           type: string
           description: 'The sequence of the protein'
           example: 'AFFGVAATRKL'
-        uniprot_md5:
-              type: string
-              description: 'MD5 hash of the UniProt sequence, i.e. version'
-              example: '8A25E1DA88208FCF'
         ligand:
           type: array
           description: 'Contains ligand annotations'
           items:
             type: object
-            required: [
-              type,
-              description,
-              begin,
-              end
-              ]
             properties:
-              type:
+              id:
                 type: string
-                description: 'The type of the annotation'
-                enum: [
-                  'NP_BIND',
-                  'BINDING',
-                  'METAL'
-                  ]
-                example: 'METAL'
-              description:
+                description: 'Three-letter code of the ligand'
+                example: 'IHP'
+              name:
                 type: string
-                description: 'A label for the annotation'
-                example: 'ATP'
-              start:
-                type: number
-                format: integer
-                description: 'The first position of the annotation'
-                example: 487
-              end:
-                type: number
-                format: integer
-                description: 'The last position of the annotation'
-                example: 495
+                description: 'Name of the small ligand'
+                example: 'INOSITOL HEXAKISPHOSPHATE'
+              formula:
+                type: string
+                description: 'Chemical composition formula of the ligand'
+                example: 'C6 H18 O24 P6'
+              inchikey:
+                type: string
+                description: 'InChIKey of the ligand'
+                example: 'IMQLKJBTEOYOSI-GPIVLXJGSA-N'
+            required: [
+              id,
+              name,
+              formula,
+              inchikey
+              ]
         secondary_structure: 
           type: array
           items:
             type: object
             description: 'Contains secondary structure annotations'
-            required: [
-              type,
-              start,
-              end
-              ]
             properties:
               type: 
                 type: string
@@ -906,41 +1037,86 @@ components:
                   'COIL'
                   ]
                 example: 'HELIX'
-              start:
-                type: number
-                format: integer
-                description: 'The first position of the annotation'
-                example: 23
-              end:
-                type: number
-                format: integer
-                description: 'The last position of the annotation'
-                example: 42
+              region:
+                type: array
+                items:
+                  type: object
+                  description: 'Start and end residue indices'
+                  required: [
+                    start,
+                    end
+                    ]
+                  properties:
+                    start:
+                      type: number
+                      format: integer
+                      description: 'The first position of the annotation'
+                      example: 23
+                    end:
+                      type: number
+                      format: integer
+                      description: 'The last position of the annotation'
+                      example: 42
+            required: [
+              type,
+              regions
+              ]
         feature: 
           type: array
           items:
             type: object
             description: 'Contains feature annotations'
-            required: [
-              type,
-              start,
-              end
-              ]
             properties:
               type: 
                 type: string
                 description: 'Type of the annotation'
                 enum: [
-                  'ACTIVE_SITE',
+                  'CARBOHYD',
+                  'DOMAIN',
+                  'CA_BIND',
+                  'DNA_BIND',
+                  'NP_BIND',
+                  'ACT_SITE',
+                  'METAL',
+                  'BINDING',
+                  'NON_STD',
+                  'MOD_RES',
+                  'DISULFID',
+                  'MUTAGEN'
                   ]
-                example: 'ACTIVE_SITE'
-              start:
-                type: number
-                format: integer
-                description: 'The first position of the annotation'
-                example: 23
-              end:
-                type: number
-                format: integer
-                description: 'The last position of the annotation'
-                example: 42
+                example: 'ACT_SITE'
+              description:
+                type: string
+                description: 'Description/Label of the annotation'
+                example: 'Pfam N1221 (PF07923)'
+              residues:
+                type: array
+                description: 'An array of residue indices'
+                items:
+                  type: number
+                  format: integer
+                  description: 'A residue index'
+                  example: 42
+              regions:
+                type: array
+                items:
+                  type: object
+                  required: [
+                    start,
+                    end
+                    ]
+                  properties:
+                    start:
+                      type: number
+                      format: integer
+                      description: 'The first position of the annotation'
+                      example: 23
+                    end:
+                      type: number
+                      format: integer
+                      description: 'The last position of the annotation'
+                      example: 42
+            required: [
+              type,
+              description,
+              ]
