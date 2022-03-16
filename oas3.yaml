@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: 0.3.1
+  version: 0.4.0
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -96,6 +96,253 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/summary'
+  '/pdb/{qualifier}.json':
+    get:
+      parameters:
+        - name: qualifier
+          description: 'PDB identifier'
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: provider
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - swissmodel
+              - genome3d
+              - foldx
+              - pdb
+          explode: true
+        - name: template
+          description: >-
+            Template is 4 letter PDB code, or 4 letter code with assembly ID and
+            chain for SMTL entries
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: range
+          description: Specify a PDB sequence residue range
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: '^[0-9]+-[0-9]+$'
+      responses:
+        '200':
+          description: >-
+            Response includes query parameter, PDB sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/result'
+  '/pdb/summary/{qualifier}.json':
+    get:
+      parameters:
+        - name: qualifier
+          description: 'PDB identifier'
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: provider
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - swissmodel
+              - genome3d
+              - foldx
+              - pdb
+              - ped
+          explode: true
+        - name: template
+          description: >-
+            Template is 4 letter PDB code, or 4 letter code with assembly ID and
+            chain for SMTL entries
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: range
+          description: Specify a PDB sequence residue range
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: '^[0-9]+-[0-9]+$'
+      responses:
+        '200':
+          description: >-
+            Response includes query parameter, PDB sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pdb_summary'
+  '/interpro/{accession}.json':
+    get:
+      parameters:
+        - name: accession
+          description: InterPro accession number (AC)
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[Ii][Pp][Rr][0-9]{6}$'
+        - name: provider
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - swissmodel
+              - genome3d
+              - foldx
+              - pdb
+          explode: true
+        - name: only_overlapping_models
+          description: >-
+              Only includes models where the region of the model in the protein 
+              ovelaps with the region of the interpro match
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: >-
+            Response includes query parameter, UniProt sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/results'
+  '/interpro/summary/{accession}.json':
+    get:
+      parameters:
+        - name: accession
+          description: InterPro accession number (AC)
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[Ii][Pp][Rr][0-9]{6}$'
+        - name: provider
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - swissmodel
+              - genome3d
+              - foldx
+              - pdb
+              - ped
+          explode: true
+        - name: only_overlapping_models
+          description: >-
+              Only includes models where the region of the model in the protein 
+              ovelaps with the region of the interpro match
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: >-
+            Response includes query parameter, UniProt sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/multiple_summary'
+  '/pfam/{accession}.json':
+    get:
+      parameters:
+        - name: accession
+          description: Pfam accession number (AC)
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[Pp][Ff][0-9]{5}$'
+        - name: provider
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - swissmodel
+              - genome3d
+              - foldx
+              - pdb
+          explode: true
+        - name: only_overlapping_models
+          description: >-
+              Only includes models where the region of the model in the protein 
+              ovelaps with the region of the interpro match
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: >-
+            Response includes query parameter, UniProt sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/results'
+  '/pfam/summary/{accession}.json':
+    get:
+      parameters:
+        - name: accession
+          description: Pfam accession number (AC)
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[Pp][Ff][0-9]{5}$'
+        - name: provider
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - swissmodel
+              - genome3d
+              - foldx
+              - pdb
+              - ped
+          explode: true
+        - name: only_overlapping_models
+          description: >-
+              Only includes models where the region of the model in the protein 
+              ovelaps with the region of the interpro match
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: >-
+            Response includes query parameter, UniProt sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/multiple_summary'
 servers:
   - url: 'https://3dbeacons.org'
     description: 3D Beacons server
@@ -120,6 +367,40 @@ components:
             id:
               type: string
               description: 'UniProt identifier, e.g. ABL1_MOUSE'
+            interpro_matches:
+              type: array
+              description: 'InterPro accessions matching the UniProt'
+              items:
+                type: object
+                properties:
+                  accession:
+                    type: string
+                    description: 'InterPro accession matching the UniProt accession'
+                  start:
+                    type: number
+                    format: integer
+                    description: 'The index of the first residue of the InterPro match'
+                  end:
+                    type: number
+                    format: integer
+                    description: 'The index of the last residue of the InterPro match'
+            pfam_matches:
+              type: array
+              description: 'Pfam accessions matching the UniProt'
+              items:
+                type: object
+                properties:
+                  accession:
+                    type: string
+                    description: 'Pfam accession matching the UniProt accession'
+                  start:
+                    type: number
+                    format: integer
+                    description: 'The index of the first residue of the Pfam match'
+                  end:
+                    type: number
+                    format: integer
+                    description: 'The index of the last residue of the Pfam match'
           required: [
             ac
             ]
@@ -375,6 +656,181 @@ components:
             id:
               type: string
               description: 'UniProt identifier, e.g. ABL1_MOUSE'
+            interpro_matches:
+              type: array
+              description: 'InterPro accessions matching the UniProt'
+              items:
+                type: object
+                properties:
+                  accession:
+                    type: string
+                    description: 'InterPro accession matching the UniProt accession'
+                  start:
+                    type: number
+                    format: integer
+                    description: 'The index of the first residue of the InterPro match'
+                  end:
+                    type: number
+                    format: integer
+                    description: 'The index of the last residue of the InterPro match'
+            pfam_matches:
+              type: array
+              description: 'Pfam accessions matching the UniProt'
+              items:
+                type: object
+                properties:
+                  accession:
+                    type: string
+                    description: 'Pfam accession matching the UniProt accession'
+                  start:
+                    type: number
+                    format: integer
+                    description: 'The index of the first residue of the Pfam match'
+                  end:
+                    type: number
+                    format: integer
+                    description: 'The index of the last residue of the Pfam match'
+
+          required: [
+            ac
+            ]
+        structures:
+          type: array
+          description: 'Information on the structures available for the UniProt accession'
+          items:
+            type: object
+            properties:
+              model_identifier:
+                type: string
+                description: 'Identifier of the model, e.g. PDB id'
+              model_category:
+                type: string
+                description: 'Category of the model, e.g. EXPERIMENTALLY DETERMINED'
+                enum: [
+                        'EXPERIMENTALLY DETERMINED',
+                        'TEMPLATE-BASED',
+                        'TEMPLATE-FREE',
+                        'CONFORMATIONAL ENSEMBLE'
+                      ]
+              model_url:
+                type: string
+                description: 'URL of the model coordinates'
+              provider:
+                type: string
+                description: 'Name of the model provider, e.g. Swiss-Model'
+                enum: [
+                        'PDBE',
+                        'SWISSMODEL',
+                        'GENOME3D',
+                        'FOLDX',
+                        'PED'
+                  ]
+              created:
+                type: string
+                description: 'Date of release of model generation in the format of YYYY-MM-DD'
+                pattern: '^[1-2][9|0][0-9]{2}-[0-1][0-9]-[0-3][0-9]$'
+              sequence_identity:
+                type: number
+                format: float
+                description: 'Sequence identity (0 to 1) of the model to the UniProt sequence, e.g. 0.9 for 90%'
+              uniprot_start:
+                type: number
+                format: integer
+                description: 'The index of the first residue of the model according to UniProt sequence numbering, e.g. 1'
+              uniprot_end:
+                type: number
+                format: integer
+                description: 'The index of the last residue of the model according to UniProt sequence numbering, e.g. 142'
+              coverage:
+                type: number
+                format: float
+                description: 'Percentage (0 to 1) of the UniProt sequence covered by the model, e.g. 0.42 for 42%'
+              resolution:
+                type: number
+                format: float
+                description: 'The resolution of the model in Angstrom, if applicable, e.g. 2.1'
+              qmean_version:
+                type: string
+                description: 'Version of QMEAN used to calculate quality'
+              qmean_avg_local_score:
+                type: number
+                format: float
+                description: 'Average of the local QMEAN scores, i.e. the average model quality'
+            required: [
+              model_identifier,
+              model_category,
+              model_url,
+              provider,
+              created,
+              sequence_identity,
+              coverage
+              ]
+      required: [
+        uniprot_entry,
+        structures
+        ]
+    results:
+      type: array
+      items:
+        $ref: '#/components/schemas/result'
+    multiple_summary:
+      type: array
+      items:
+        $ref: '#/components/schemas/summary'
+    pdb_summary:
+      type: object
+      properties:
+        uniprot_entry:
+          type: object
+          description: 'Information on the UniProt accession the data corresponds to'
+          properties:
+            uniprot_md5:
+              type: string
+              description: 'MD5 hash of the UniProt sequence, i.e. identifies the sequence'
+            sequence_length:
+              type: integer
+              description: 'Length of the UniProt sequence, e.g. 100 amino acids'
+            ac:
+              type: string
+              description: 'UniProt accession, e.g. P00520'
+            id:
+              type: string
+              description: 'UniProt identifier, e.g. ABL1_MOUSE'
+            interpro_matches:
+              type: array
+              description: 'InterPro accessions matching the UniProt'
+              items:
+                type: object
+                properties:
+                  accession:
+                    type: string
+                    description: 'InterPro accession matching the UniProt accession'
+                  start:
+                    type: number
+                    format: integer
+                    description: 'The index of the first residue of the InterPro match'
+                  end:
+                    type: number
+                    format: integer
+                    description: 'The index of the last residue of the InterPro match'
+            pfam_matches:
+              type: array
+              description: 'Pfam accessions matching the UniProt'
+              items:
+                type: object
+                properties:
+                  accession:
+                    type: string
+                    description: 'Pfam accession matching the UniProt accession'
+                  start:
+                    type: number
+                    format: integer
+                    description: 'The index of the first residue of the Pfam match'
+                  end:
+                    type: number
+                    format: integer
+                    description: 'The index of the last residue of the Pfam match'
+
           required: [
             ac
             ]
