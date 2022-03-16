@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: 0.5.0
+  version: 0.5.1
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -386,6 +386,14 @@ components:
               model_url:
                 type: string
                 description: 'URL of the model coordinates'
+              model_format:
+                type: string
+                description: 'File format of the coordinates, e.g. PDB'
+                enum: [
+                        'PDB',
+                        'MMCIF',
+                        'BCIF'
+                      ]
               provider:
                 type: string
                 description: 'Name of the model provider, e.g. Swiss-Model'
@@ -677,6 +685,14 @@ components:
               model_url:
                 type: string
                 description: 'URL of the model coordinates'
+              model_format:
+                type: string
+                description: 'File format of the coordinates, e.g. PDB'
+                enum: [
+                        'PDB',
+                        'MMCIF',
+                        'BCIF'
+                      ]
               provider:
                 type: string
                 description: 'Name of the model provider, e.g. Swiss-Model'
@@ -786,6 +802,14 @@ components:
               model_url:
                 type: string
                 description: 'URL of the model coordinates'
+              model_format:
+                type: string
+                description: 'File format of the coordinates, e.g. PDB'
+                enum: [
+                        'PDB',
+                        'MMCIF',
+                        'BCIF'
+                      ]
               provider:
                 type: string
                 description: 'Name of the model provider, e.g. Swiss-Model'
