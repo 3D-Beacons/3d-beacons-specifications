@@ -1,6 +1,6 @@
 info:
   title: ELIXIR 3D Beacons API
-  version: 0.3.0
+  version: 0.3.1
   description: >-
     OpenAPI 3 description of ELIXIR 3D-Beacons service. The service
     returns a list of homology models, PDB structures and the target sequence
@@ -121,9 +121,7 @@ components:
               type: string
               description: 'UniProt identifier, e.g. ABL1_MOUSE'
           required: [
-            sequence_length,
-            ac,
-            id
+            ac
             ]
         structures:
           type: array
@@ -162,6 +160,14 @@ components:
                 type: number
                 format: float
                 description: 'Sequence identity of the model to the UniProt sequence, e.g. 90%'
+              uniprot_start:
+                type: number
+                format: integer
+                description: 'The index of the first residue of the model according to UniProt sequence numbering, e.g. 1'
+              uniprot_end:
+                type: number
+                format: integer
+                description: 'The index of the last residue of the model according to UniProt sequence numbering, e.g. 142'
               coverage:
                 type: number
                 format: float
@@ -370,9 +376,7 @@ components:
               type: string
               description: 'UniProt identifier, e.g. ABL1_MOUSE'
           required: [
-            sequence_length,
-            ac,
-            id
+            ac
             ]
         structures:
           type: array
