@@ -1,6 +1,6 @@
 info:
   title: 3D Beacons API
-  version: 1.3.0
+  version: 1.4.0
   description: >-
     OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
@@ -21,12 +21,6 @@ paths:
           required: false
           schema:
             type: string
-            enum:
-              - swissmodel
-              - genome3d
-              - foldx
-              - pdb
-              - modelarchive
           explode: true
         - name: template
           description: >-
@@ -51,7 +45,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/uniprot_keyed'
+                $ref: '#/components/schemas/uniprot_details'
   '/uniprot/summary/{qualifier}.json':
     get:
       parameters:
@@ -66,13 +60,6 @@ paths:
           required: false
           schema:
             type: string
-            enum:
-              - swissmodel
-              - genome3d
-              - foldx
-              - pdb
-              - ped
-              - modelarchive
           explode: true
         - name: template
           description: >-
@@ -97,7 +84,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/uniprot_keyed'
+                $ref: '#/components/schemas/uniprot_summary'
   '/pdb/summary/{qualifier}-{chain}.json':
     get:
       parameters:
@@ -118,13 +105,6 @@ paths:
           required: false
           schema:
             type: string
-            enum:
-              - swissmodel
-              - genome3d
-              - foldx
-              - pdb
-              - ped
-              - modelarchive
           explode: true
         - name: template
           description: >-
@@ -149,7 +129,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pdb_keyed'
+                $ref: '#/components/schemas/pdb_summary'
   '/metadata/{qualifier}.json':
     get:
       parameters:
@@ -198,44 +178,60 @@ servers:
     description: 3D Beacons server
 components:
   schemas:
-    uniprot_keyed:
+    uniprot_summary:
       type: object
       properties:
         uniprot_entry:
-          type: object
-          description: Information on the UniProt accession the data corresponds to
-          properties:
-            ac:
-              type: string
-              description: UniProt accession
-              example: P00520
-            id:
-              type: string
-              description: UniProt identifier
-              example: ABL1_MOUSE
-            uniprot_checksum:
-              type: string
-              description: CRC64 checksum of the UniProt sequence
-              example: 5F9BA1D4C7DE6925
-            sequence_length:
-              type: integer
-              description: Length of the UniProt sequence
-              example: 76
-            segment_start:
-              type: integer
-              description: 1-indexed first residue of the UniProt sequence segment
-              example: 1
-            segment_end:
-              type: integer
-              description: 1-indexed last residue of the UniProt sequence segment
-              example: 86
-          required:
-            - ac
+          $ref: '#/components/schemas/uniprot_entry'
         structures:
-          type: array
-          items:
-            $ref: '#/components/schemas/structures'
-    pdb_keyed:
+          $ref: '#/components/schemas/summary'
+    uniprot_details:
+      type: object
+      properties:
+        uniprot_entry:
+          $ref: '#/components/schemas/uniprot_entry'
+        structures:
+          $ref: '#/components/schemas/summary'
+        chains:
+          $ref: '#/components/schemas/chains'
+    pdb_summary:
+      type: object
+      properties:
+        uniprot_entry:
+          $ref: '#/components/schemas/pdb_entry'
+        structures:
+          $ref: '#/components/schemas/summary'
+    uniprot_entry:
+      type: object
+      description: Information on the UniProt accession the data corresponds to
+      properties:
+        ac:
+          type: string
+          description: UniProt accession
+          example: P00520
+        id:
+          type: string
+          description: UniProt identifier
+          example: ABL1_MOUSE
+        uniprot_checksum:
+          type: string
+          description: CRC64 checksum of the UniProt sequence
+          example: 5F9BA1D4C7DE6925
+        sequence_length:
+          type: integer
+          description: Length of the UniProt sequence
+          example: 76
+        segment_start:
+          type: integer
+          description: 1-indexed first residue of the UniProt sequence segment
+          example: 1
+        segment_end:
+          type: integer
+          description: 1-indexed last residue of the UniProt sequence segment
+          example: 86
+      required:
+        - ac
+    pdb_entry:
       type: object
       properties:
         pdb_entry:
@@ -267,11 +263,7 @@ components:
             - chain_id
             - uniprot_start
             - uniprot_end
-        structures:
-          type: array
-          items:
-            $ref: '#/components/schemas/structures'
-    structures:
+    summary:
       type: object
       properties:
         model_identifier:
@@ -316,17 +308,7 @@ components:
         provider:
           type: string
           description: Name of the model provider
-          enum:
-            - PDBe
-            - SWISS-MODEL
-            - Genome3D
-            - FoldX
-            - PED
-            - SASBDB
-            - AlphaFold DB
-            - ModelArchive
-            - AlphaFill
-          example: PED
+          example: SWISS-MODEL
         number_of_conformers:
           type: number
           description: The number of conformers in a conformational ensemble
@@ -486,156 +468,12 @@ components:
                 type: array
                 items:
                   type: string
-                  description: A list of chain identifiers of the molecule
+                  description: A list of chain identifiers of the molecule; this is label_asym_id in mmCIF
                   example: A
             required:
               - entity_type
               - description
               - chain_ids
-        chains:
-          type: array
-          items:
-            type: object
-            properties:
-              chain_id:
-                type: string
-              segments:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    templates:
-                      type: array
-                      description: Information on the template(s) used for the model
-                      items:
-                        type: object
-                        properties:
-                          template_id:
-                            type: string
-                            description: Identifier of the template
-                            example: 2aqa
-                          chain_id:
-                            type: string
-                            description: Identifier of the chain of the template
-                            example: C
-                          template_sequence_identity:
-                            type: number
-                            description: >
-                              Sequence identity of the template with the 
-                              UniProt accession, in the range of [0,1]
-                            example: 0.97
-                          last_updated:
-                            type: string
-                            description: >
-                              Date of release of the last update in  the format
-                              of YYYY-MM-DD
-                            example: '2021-08-06'
-                          provider:
-                            type: string
-                            description: Provider of the template
-                            example: PDB
-                          experimental_method:
-                            type: string
-                            enum:
-                              - ELECTRON CRYSTALLOGRAPHY
-                              - ELECTRON MICROSCOPY
-                              - EPR
-                              - FIBER DIFFRACTION
-                              - FLUORESCENCE TRANSFER
-                              - INFRARED SPECTROSCOPY
-                              - NEUTRON DIFFRACTION
-                              - POWDER DIFFRACTION
-                              - SOLID-STATE NMR
-                              - SOLUTION NMR
-                              - SOLUTION SCATTERING
-                              - THEORETICAL MODEL
-                              - X-RAY DIFFRACTION
-                              - HYBRID
-                            description: Experimental method used to determine the template
-                            example: HYBRID
-                          resolution:
-                            type: number
-                            description: 'Resolution of the template, in Angstrom'
-                            example: 2.1
-                          preferred_assembly_id:
-                            type: string
-                            description: >-
-                              Identifier of the preferred assembly of the
-                              template
-                            example: '1'
-                        required:
-                          - template_id
-                          - chain_id
-                          - last_updated
-                          - provider
-                          - experimental_method
-                          - resolution
-                          - template_sequence_identity
-                    seqres:
-                      type: object
-                      description: Information on the sequence of the model
-                      properties:
-                        aligned_sequence:
-                          type: string
-                          description: Sequence of the model
-                          example: AAGTGHLKKKYT...
-                        from:
-                          type: integer
-                          description: 1-indexed first residue
-                          example: 32
-                        to:
-                          type: integer
-                          description: 1-indexed last residue
-                          example: 976
-                      required:
-                        - aligned_sequence
-                        - from
-                        - to
-                    uniprot:
-                      type: object
-                      properties:
-                        aligned_sequence:
-                          type: string
-                          description: Sequence of the UniProt accession
-                          example: AAGTGHLKKKYTAAGTGHLKKKYT...
-                        from:
-                          type: integer
-                          description: 1-indexed first residue
-                          example: 23
-                        to:
-                          type: integer
-                          description: 1-indexed last residue
-                          example: 868
-                      required:
-                        - aligned_sequence
-                        - from
-                        - to
-                    residues:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          confidence:
-                            type: number
-                            description: 'Confidence score in the range of [0,1]'
-                            example: 0.99
-                          model_residue_label:
-                            type: integer
-                            description: Model residue index
-                            example: 1
-                          uniprot_residue_number:
-                            type: integer
-                            description: UniProt residue index
-                            example: 1
-                        required:
-                          - model_residue_label
-                          - uniprot_residue_number
-                  required:
-                    - seqres
-                    - uniprot
-                    - residues
-            required:
-              - chain_id
       required:
         - model_identifier
         - model_category
@@ -648,6 +486,150 @@ components:
         - uniprot_start
         - uniprot_end
         - entities
+    chains:
+      type: array
+      items:
+        type: object
+        properties:
+          chain_id:
+            type: string
+          segments:
+            type: array
+            items:
+              type: object
+              properties:
+                templates:
+                  type: array
+                  description: Information on the template(s) used for the model
+                  items:
+                    type: object
+                    properties:
+                      template_id:
+                        type: string
+                        description: Identifier of the template
+                        example: 2aqa
+                      chain_id:
+                        type: string
+                        description: Identifier of the chain of the template; this is label_asym_id in mmCIF
+                        example: C
+                      template_sequence_identity:
+                        type: number
+                        description: >
+                          Sequence identity of the template with the 
+                          UniProt accession, in the range of [0,1]
+                        example: 0.97
+                      last_updated:
+                        type: string
+                        description: >
+                          Date of release of the last update in  the format
+                          of YYYY-MM-DD
+                        example: '2021-08-06'
+                      provider:
+                        type: string
+                        description: Provider of the template
+                        example: PDB
+                      experimental_method:
+                        type: string
+                        enum:
+                          - ELECTRON CRYSTALLOGRAPHY
+                          - ELECTRON MICROSCOPY
+                          - EPR
+                          - FIBER DIFFRACTION
+                          - FLUORESCENCE TRANSFER
+                          - INFRARED SPECTROSCOPY
+                          - NEUTRON DIFFRACTION
+                          - POWDER DIFFRACTION
+                          - SOLID-STATE NMR
+                          - SOLUTION NMR
+                          - SOLUTION SCATTERING
+                          - THEORETICAL MODEL
+                          - X-RAY DIFFRACTION
+                          - HYBRID
+                        description: Experimental method used to determine the template
+                        example: HYBRID
+                      resolution:
+                        type: number
+                        description: 'Resolution of the template, in Angstrom'
+                        example: 2.1
+                      preferred_assembly_id:
+                        type: string
+                        description: >-
+                          Identifier of the preferred assembly of the
+                          template
+                        example: '1'
+                    required:
+                      - template_id
+                      - chain_id
+                      - last_updated
+                      - provider
+                      - experimental_method
+                      - resolution
+                      - template_sequence_identity
+                seqres:
+                  type: object
+                  description: Information on the sequence of the model
+                  properties:
+                    aligned_sequence:
+                      type: string
+                      description: Sequence of the model
+                      example: AAGTGHLKKKYT...
+                    from:
+                      type: integer
+                      description: 1-indexed first residue
+                      example: 32
+                    to:
+                      type: integer
+                      description: 1-indexed last residue
+                      example: 976
+                  required:
+                    - aligned_sequence
+                    - from
+                    - to
+                uniprot:
+                  type: object
+                  properties:
+                    aligned_sequence:
+                      type: string
+                      description: Sequence of the UniProt accession
+                      example: AAGTGHLKKKYTAAGTGHLKKKYT...
+                    from:
+                      type: integer
+                      description: 1-indexed first residue
+                      example: 23
+                    to:
+                      type: integer
+                      description: 1-indexed last residue
+                      example: 868
+                  required:
+                    - aligned_sequence
+                    - from
+                    - to
+                residues:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      confidence:
+                        type: number
+                        description: 'Confidence score in the range of [0,1]'
+                        example: 0.99
+                      model_residue_label:
+                        type: integer
+                        description: Model residue index
+                        example: 1
+                      uniprot_residue_number:
+                        type: integer
+                        description: UniProt residue index
+                        example: 1
+                    required:
+                      - model_residue_label
+                      - uniprot_residue_number
+              required:
+                - seqres
+                - uniprot
+                - residues
+        required:
+          - chain_id
     annotations:
       type: object
       description: Contains annotations for a UniProt accession
