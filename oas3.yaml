@@ -414,7 +414,7 @@ components:
           example: 1A
         entities:
           type: array
-          description: A list of the macromolecules in the model
+          description: A list of molecular entities in the model
           items:
             type: object
             properties:
