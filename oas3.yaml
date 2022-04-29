@@ -4,7 +4,7 @@ info:
   description: >-
     OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
-    UniProtKB Accession. This is version 1.4.0
+    UniProtKB Accession.
 openapi: 3.0.1
 paths:
   '/uniprot/{qualifier}.json':
