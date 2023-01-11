@@ -1,6 +1,6 @@
 info:
   title: 3D Beacons API
-  version: 2.2.0
+  version: 2.3.0
   description: >-
     OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
@@ -231,11 +231,101 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/metadata'
+  '/sequence/search':
+    post:
+      requestBody:
+        content: 
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/sequence_request'
+      responses:
+        '200':
+          description: >-
+            Response includes a job identifier which can be used to retrieve the
+            results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job_id'
+        '202':
+          description: >-
+            Response includes a job identifier which can be used to retrieve the
+            results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job_id'
+        '400':
+          description: >-
+            Response includes a message describing the error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/message'
+  '/sequence/result':
+    get:
+      parameters:
+        - name: job_id
+          description: Sequence search job identifier
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: page_num
+          description: Page number, in case of large result set
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: >-
+            Response includes a list of sequence search results and 
+            the corresponding models availble for the proteins
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sequence_search_result'
+        '202':
+          description: >-
+            Response includes a message which indicates that the job is still
+            running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/message'
+        '400':
+          description: >-
+            Response includes a message describing the error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/message'        
+
+        
 servers:
   - url: 'https://3dbeacons.org'
     description: 3D Beacons server
 components:
   schemas:
+    sequence_request:
+      type: object
+      properties:
+        sequence:
+          description: A query sequence
+          type: string
+    job_id:
+      type: object
+      properties:
+        job_id:
+          description: Sequence search job identifier
+          type: string
+    message:
+      type: object
+      properties:
+        message:
+          type: string
     accession_list_request:
       type: object
       properties:
@@ -245,6 +335,72 @@ components:
         provider:
           type: string
         exclude_provider:
+          type: string
+    sequence_search_result:
+      type: object
+      properties:
+        hits:
+          description: List of search hits
+          type: array
+          items:
+            $ref: '#/components/schemas/search_accession'
+        total_hits:
+          description: Total number of hits
+          type: integer
+        current_page:
+          description: Current page number
+          type: integer
+        total_pages:
+          description: Total number of pages
+          type: integer
+        max_results_per_page:
+          description: Maximum number of results per page
+          type: integer
+    search_accession:
+      type: object
+      properties:
+        accession:
+          description: UniProtKB accession number (AC)
+          type: string
+        description:
+          description: UniProtKB description
+          type: string
+        hit_length:
+          description: Hit length
+          type: integer
+        hit_hsps:
+          description: List of HSPs
+          type: array
+          items:
+            $ref: '#/components/schemas/hsp'
+        summary:
+          $ref: '#/components/schemas/uniprot_summary'
+    hsp:
+      type: object
+      properties:
+        hsp_score:
+          description: HSP score
+          type: number
+        hsp_bit_score:
+          description: HSP bit score
+          type: number
+        hsp_align_len:
+          description: HSP alignment length
+          type: integer
+        hsp_identity:
+          description: HSP identity
+          type: number
+        hsp_positive:
+          description: HSP positive
+          type: number
+        hsp_qseq: 
+          description: HSP query sequence
+          type: string
+        hsp_hseq: 
+          description: HSP hit sequence
+          type: string
+        hsp_mseq: 
+          description: HSP match sequence
           type: string
     uniprot_summary:
       type: object
@@ -278,7 +434,7 @@ components:
         taxid:
           type: string
           description: Taxonomy identifier
-          example: 9606
+          example: '9606'
         uniprot_mappings:
           type: array
           items:
@@ -296,13 +452,13 @@ components:
         transcript_id:
           type: string
           description: Transcript identifier
-          example: 5463402
+          example: '5463402'
         seqRegionStart:
-          type: int
+          type: integer
           description: Transcript first residue index
           example: 12453
         seqRegionEnd:
-          type: int
+          type: integer
           description: Transcript last residue index
           example: 24546
         alignment_difference:
