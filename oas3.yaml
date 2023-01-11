@@ -1,6 +1,6 @@
 info:
   title: 3D Beacons API
-  version: 2.0.0
+  version: 2.2.0
   description: >-
     OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
@@ -85,6 +85,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/uniprot_summary'
+  '/uniprot/summary':
+    post:
+      requestBody:
+        content: 
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/accession_list_request'
+      responses:
+        '200':
+          description: >-
+            Response includes list of query parameter, UniProt sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/uniprot_summary'
+  '/uniprot/annotations/{accession}.json':
+    get:
+      parameters:
+        - name: accession
+          description: UniProtKB accession number (AC)
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: range
+          description: Specify a UniProt sequence residue range
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '1-100'
+      responses:
+        '200':
+          description: >-
+            Response includes query parameter, UniProt sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/annotations'
   '/pdb/summary/{qualifier}-{chain}.json':
     get:
       parameters:
@@ -130,6 +173,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/pdb_summary'
+  '/ensembl/summary/{qualifier}.json':
+    get:
+      parameters:
+        - name: qualifier
+          description: Ensembl identifier
+          example: 'ENSRNOG00000069211'
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: provider
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: true
+        - name: template
+          description: >-
+            Template is 4 letter PDB code, or 4 letter code with assembly ID and
+            chain for SMTL entries
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: range
+          description: Specify an Ensembl sequence residue range
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '1-100'
+      responses:
+        '200':
+          description: >-
+            Response includes query parameter, UniProt sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ensembl_summary'
   '/metadata/{qualifier}.json':
     get:
       parameters:
@@ -148,36 +231,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/metadata'
-  '/pdbe-kb/annotations/uniprot/{accession}.json':
-    get:
-      parameters:
-        - name: accession
-          description: UniProtKB accession number (AC)
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: range
-          description: Specify a UniProt sequence residue range
-          in: query
-          required: false
-          schema:
-            type: string
-            example: '1-100'
-      responses:
-        '200':
-          description: >-
-            Response includes query parameter, UniProt sequence summary and list
-            of structures which may be empty
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/annotations'
 servers:
   - url: 'https://3dbeacons.org'
     description: 3D Beacons server
 components:
   schemas:
+    accession_list_request:
+      type: object
+      properties:
+        accessions:
+          description: List of UniProtKB accession number (AC)
+          type: array
+        provider:
+          type: string
+        exclude_provider:
+          type: string
     uniprot_summary:
       type: object
       properties:
@@ -196,6 +264,51 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/detailed'
+    ensembl_summary:
+      type: object
+      properties:
+        ensembl_id:
+          type: string
+          description: An Ensembl identifier
+          example: ENSG00000139618
+        species:
+          type: string
+          description: Species name
+          example: Homo sapiens
+        taxid:
+          type: string
+          description: Taxonomy identifier
+          example: 9606
+        uniprot_mappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ensembl_summary_mapping'
+    ensembl_summary_mapping:
+      type: object
+      properties:
+        ensembl_transcript:
+          $ref: '#/components/schemas/ensembl_mapping'
+        uniprot_accession:
+          $ref: '#/components/schemas/uniprot_summary'
+    ensembl_mapping:
+      type: object
+      properties:
+        transcript_id:
+          type: string
+          description: Transcript identifier
+          example: 5463402
+        seqRegionStart:
+          type: int
+          description: Transcript first residue index
+          example: 12453
+        seqRegionEnd:
+          type: int
+          description: Transcript last residue index
+          example: 24546
+        alignment_difference:
+          type: number
+          description: Fraction of alignment difference (0 to 1)
+          example: 0.01
     pdb_summary:
       type: object
       properties:
@@ -403,6 +516,7 @@ components:
           enum:
             - pLDDT
             - QMEANDisCo
+            - ipTM+pTM
         confidence_version:
           type: string
           description: >
