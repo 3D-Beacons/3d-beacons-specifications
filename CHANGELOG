@@ -1,3 +1,18 @@
+v2.3.0 - 11 Jan 2023
+
+* Added sequence search POST endpoint
+  * Added sequence_request to schema
+  * Added job_id to schema
+* Added sequence search result GET endpoint
+  * Added sequence_search_result to schema
+  * Added search_accession to schema
+  * Added hsp to schema
+
+v2.2.0 - 11 Jan 2023
+
+* Added for UniProt summary POST endpoint
+  * Added accession_list_request to schema
+
 v1.3.0 - 16 Mar 2022
 
 * structures.entities.entity_type enum was updated
