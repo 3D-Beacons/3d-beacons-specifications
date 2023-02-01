@@ -1,6 +1,6 @@
 info:
   title: 3D Beacons API
-  version: 2.3.0
+  version: 2.4.0
   description: >-
     OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
@@ -347,29 +347,36 @@ components:
         total_hits:
           description: Total number of hits
           type: integer
+          example: 130
         current_page:
-          description: Current page number
+          description: Current page number, always start with 0
           type: integer
+          example: 0
         total_pages:
           description: Total number of pages
           type: integer
+          example: 5
         max_results_per_page:
           description: Maximum number of results per page
           type: integer
+          example: 10
     search_accession:
       type: object
       properties:
         accession:
           description: UniProtKB accession number (AC)
           type: string
+          example: P00520
         description:
           description: UniProtKB description
           type: string
+          example: Tyrosine-protein kinase ABL1
         hit_length:
           description: Hit length
           type: integer
+          example: 130
         hit_hsps:
-          description: List of HSPs
+          description: List of HSPs (alignments))
           type: array
           items:
             $ref: '#/components/schemas/hsp'
@@ -377,31 +384,40 @@ components:
           $ref: '#/components/schemas/uniprot_summary'
     hsp:
       type: object
+      description: High-scoring Segment Pair (alignment)
       properties:
         hsp_score:
           description: HSP score
           type: number
+          example: 757
         hsp_bit_score:
           description: HSP bit score
           type: number
+          example: 296.204
         hsp_align_len:
           description: HSP alignment length
           type: integer
+          example: 120
         hsp_identity:
           description: HSP identity
           type: number
+          example: 90.2
         hsp_positive:
           description: HSP positive
           type: number
+          example: 90.2
         hsp_qseq: 
           description: HSP query sequence
           type: string
+          example: ASYIAALYHTDLIDLSEFVLPVFNGEAEQSELL
         hsp_hseq: 
           description: HSP hit sequence
           type: string
+          example: ASYIAALYHTDLIDLS FVLPVFNGEAEQSELL
         hsp_mseq: 
           description: HSP match sequence
           type: string
+          example: ASYIAALYHTDLIDLSPFVLPVFNGEAEQSELL
     uniprot_summary:
       type: object
       properties:
@@ -937,68 +953,7 @@ components:
           type: string
           description: The sequence of the protein
           example: AFFGVAATRKL
-        ligand:
-          type: array
-          description: Contains ligand annotations
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: Three-letter code of the ligand
-                example: IHP
-              name:
-                type: string
-                description: Name of the small ligand
-                example: INOSITOL HEXAKISPHOSPHATE
-              formula:
-                type: string
-                description: Chemical composition formula of the ligand
-                example: C6 H18 O24 P6
-              inchikey:
-                type: string
-                description: InChIKey of the ligand
-                example: IMQLKJBTEOYOSI-GPIVLXJGSA-N
-            required:
-              - id
-              - name
-              - formula
-              - inchikey
-        secondary_structure:
-          type: array
-          items:
-            type: object
-            description: Contains secondary structure annotations
-            properties:
-              type:
-                type: string
-                description: Type of the secondary structure element
-                enum:
-                  - HELIX
-                  - SHEET
-                  - COIL
-                example: HELIX
-              region:
-                type: array
-                items:
-                  type: object
-                  description: Start and end residue indices
-                  required:
-                    - start
-                    - end
-                  properties:
-                    start:
-                      type: integer
-                      description: The first position of the annotation
-                      example: 23
-                    end:
-                      type: integer
-                      description: The last position of the annotation
-                      example: 42
-            required:
-              - type
-              - regions
-        feature:
+        annotation:
           type: array
           items:
             type: object
@@ -1012,7 +967,6 @@ components:
                   - DOMAIN
                   - CA_BIND
                   - DNA_BIND
-                  - NP_BIND
                   - ACT_SITE
                   - METAL
                   - BINDING
@@ -1020,11 +974,31 @@ components:
                   - MOD_RES
                   - DISULFID
                   - MUTAGEN
+                  - HELIX
+                  - STRAND
+                  - DISORDERED
+                  - INTERFACE
+                  - CHANNEL
                 example: ACT_SITE
               description:
                 type: string
-                description: Description/Label of the annotation
+                description: Label for an annotation
                 example: Pfam N1221 (PF07923)
+              source_name:
+                type: string
+                description: Name of the source of the annotations, i.e. where is the data from
+                example: PDBe
+              source_url:
+                type: string
+                description: URL of the source of the annotation, i.e. where to find more data
+                example: https://pdbe-kb.org/proteins/P12345/ligands
+              evidence:
+                type: string
+                description: Evidence category of the annotation
+                enum:
+                  - EXPERIMENTALLY DETERMINED
+                  - COMPUTATIONAL/PREDICTED
+                  - FROM LITERATURE
               residues:
                 type: array
                 description: An array of residue indices
