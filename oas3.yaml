@@ -1,6 +1,6 @@
 info:
   title: 3D Beacons API
-  version: 2.4.0
+  version: 2.4.1
   description: >-
     OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
@@ -119,6 +119,13 @@ paths:
           schema:
             type: string
             example: '1-100'
+        - name: type
+          description: Type of annotation
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/annotation_type'
+
       responses:
         '200':
           description: >-
@@ -309,6 +316,26 @@ servers:
     description: 3D Beacons server
 components:
   schemas:
+    annotation_type:
+      type: string
+      description: Type of the annotation
+      enum:
+        - CARBOHYD
+        - DOMAIN
+        - CA_BIND
+        - DNA_BIND
+        - ACT_SITE
+        - METAL
+        - BINDING
+        - NON_STD
+        - MOD_RES
+        - DISULFID
+        - MUTAGEN
+        - HELIX
+        - STRAND
+        - DISORDERED
+        - INTERFACE
+        - CHANNEL
     sequence_request:
       type: object
       properties:
@@ -960,25 +987,7 @@ components:
             description: Contains feature annotations
             properties:
               type:
-                type: string
-                description: Type of the annotation
-                enum:
-                  - CARBOHYD
-                  - DOMAIN
-                  - CA_BIND
-                  - DNA_BIND
-                  - ACT_SITE
-                  - METAL
-                  - BINDING
-                  - NON_STD
-                  - MOD_RES
-                  - DISULFID
-                  - MUTAGEN
-                  - HELIX
-                  - STRAND
-                  - DISORDERED
-                  - INTERFACE
-                  - CHANNEL
+                $ref: '#/components/schemas/annotation_type'
                 example: ACT_SITE
               description:
                 type: string
