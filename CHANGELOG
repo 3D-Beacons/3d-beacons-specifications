@@ -1,3 +1,11 @@
+v2.4.1 - 26 Apr 2023
+
+* Add required field "annotation_type" to uniprot annotations endpoint
+
+v2.4.0 - 1 Feb 2023
+
+* Updated annotations enums
+
 v2.3.0 - 11 Jan 2023
 
 * Added sequence search POST endpoint
