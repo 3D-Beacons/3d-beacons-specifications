@@ -322,8 +322,6 @@ components:
       enum:
         - CARBOHYD
         - DOMAIN
-        - CA_BIND
-        - DNA_BIND
         - ACT_SITE
         - METAL
         - BINDING
