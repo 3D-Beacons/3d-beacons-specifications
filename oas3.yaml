@@ -1,6 +1,6 @@
 info:
   title: 3D Beacons API
-  version: 2.4.2
+  version: 2.5.0
   description: >-
     OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
@@ -737,6 +737,10 @@ components:
             - HOMO-OLIGOMER
             - HETERO-OLIGOMER
           example: MONOMER
+        oligomeric_state_confidence:
+          type: number
+          description: Numerical value that describes the confidence in the oligomeric state of the predicted complex
+          example: 0.4603
         preferred_assembly_id:
           type: string
           description: Identifier of the preferred assembly in the model
