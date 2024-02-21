@@ -1,6 +1,6 @@
 info:
   title: 3D Beacons API
-  version: 2.5.0
+  version: 2.5.1
   description: >-
     OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
@@ -801,7 +801,7 @@ components:
                 type: array
                 items:
                   type: string
-                  description: A list of chain identifiers of the molecule; this is label_asym_id in mmCIF
+                  description: A list of label_asym identifiers ( chain_id in the case of PDB format) of the molecule
                   example: A
             required:
               - entity_type
