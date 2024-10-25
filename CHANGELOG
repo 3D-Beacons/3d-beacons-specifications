@@ -1,3 +1,9 @@
+v2.6.0 - 25 Oct 2024
+
+* Added support for searching by UniProt sequence checksum for both summary and details endpoints to allow for more flexible searching
+* Added optional fields "annotation_value" and "unit" to UniProt annotations endpoint to support exposing any additional information that may be available for a given annotation
+* Added contact and license information to the specification
+
 v2.5.1 - 21 Feb 2024
 * Updated chain_ids array description for the summary endpoint
 
