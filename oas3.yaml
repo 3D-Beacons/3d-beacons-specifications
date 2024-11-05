@@ -1102,6 +1102,28 @@ components:
             - single
             - complex
           example: single
+        confidenceType:
+          type: string
+          description: >
+            Type of the confidence measure. This is required for  theoretical
+            models.
+          example: QMEANDisCo
+          enum:
+            - pLDDT
+            - QMEANDisCo
+        confidenceVersion:
+          type: string
+          description: >
+            Version of confidence measure software used to calculate quality. 
+            This is required for theoretical models.
+          example: v1.0.2
+        confidenceAvgLocalScore:
+          type: number
+          description: >
+            Average of the confidence measures in the range of [0,1] for QMEANDisCo 
+            and [0,100] for pLDDT. Please contact 3D-Beacons developers if other 
+            estimates are to be added. This is required for theoretical models.
+          example: 0.95
       required:
         - mappingAccession
         - mappingAccessionType
@@ -1109,3 +1131,5 @@ components:
         - end
         - modelCategory
         - modelType
+        - confidenceType
+        - confidenceAvgLocalScore
