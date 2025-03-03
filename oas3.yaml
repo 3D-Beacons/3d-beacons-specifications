@@ -1,6 +1,6 @@
 info:
   title: 3D Beacons API
-  version: 2.6.0
+  version: 2.7.0
   description: >-
     OpenAPI 3 description of the 3D-Beacons service. The service returns a
     list of homology models, PDB structures and the target sequence for a
@@ -257,6 +257,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/metadata'
+  '/sequence/summary':
+    get:
+      description: |
+        Retrieve a summary of experimentally determined and predicted structure models 
+        available for a sequence.
+
+      parameters:
+        - name: id
+          description: An identifier for the type specified in the type parameter.
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          description: Type of the identifier
+          schema:
+            type: string
+            enum:
+              - sequence
+              - crc64
+              - md5
+            default: sequence
+      responses:
+        '200':
+          description: >-
+            Response includes list of query parameter, UniProt sequence summary and list
+            of structures which may be empty
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/sequence_summary'
   '/sequence/search':
     post:
       requestBody:
@@ -327,11 +361,36 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/message'        
+                $ref: '#/components/schemas/message'
+  /health:
+    get:
+      summary: Health Check
+      description: Returns the health status of all the beacons.
+      responses:
+        '200':
+          description: Service is healthy.
+          content:
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/status'
+        '500':
+          description: Service is down or unhealthy.
+          content:
+            application/health+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/status'
+              example:
+                - status: fail
+                  serviceId: pdbe
+                  version: 2.6.0
+                  output: 'Service is unhealthy, not able to reach the backend!'
 
-        
 servers:
-  - url: 'https://3dbeacons.org'
+  - url: 'https://3dbeacons.org/api/'
     description: 3D Beacons server
 components:
   schemas:
@@ -534,6 +593,51 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/overview'
+    sequence_summary:
+      type: object
+      properties:
+        entry:
+          type: object
+          description: A query sequence
+          $ref: '#/components/schemas/entry'
+        structures:
+          type: array
+          items:
+            $ref: '#/components/schemas/sequence_overview'
+      required:
+        - entry
+        - structures
+    sequence_overview:
+      type: object
+      properties:
+        summary:
+          type: array
+          items:
+            $ref: '#/components/schemas/summary_items'
+      required:
+        - summary
+    entry:
+      type: object
+      properties:
+        sequence: 
+          type: string
+          description: A sequence
+          example: 'MGLSDGEWQLVLNVWGKVEADIPGHGQEVLIRLFKGHPETLEKFDKFKHLKSEDEMKASEDLKKHGATVLTALGGILKKKGHHEAELKPLAQSHATKHKIPIKYLEFISEAIIHVLHSRHPGDFGADAQGAMNKALELFRKDIAAKYKELGYQG'
+        checksum:
+          type: string
+          description: CRC64 or MD5 checksum of the sequence
+          example: 5F9BA1D4C7DE6925
+        checksum_type:
+          type: string
+          description: Type of the checksum
+          enum:
+            - CRC64
+            - MD5
+          example: CRC64
+      required:
+        - sequence
+        - checksum
+        - checksum_type
     uniprot_entry:
       type: object
       description: Information on the UniProt accession the data corresponds to
@@ -597,7 +701,21 @@ components:
       type: object
       properties:
         summary: 
-          $ref: '#/components/schemas/summary_items'
+          allOf:
+            - $ref: '#/components/schemas/summary_items'
+          properties:
+            uniprot_start:
+              type: integer
+              description: >
+                1-indexed first residue of the model according to UniProt sequence
+                numbering
+              example: 1
+            uniprot_end:
+              type: integer
+              description: >
+                1-indexed last residue of the model according to UniProt sequence
+                numbering
+              example: 142
         chains: 
           $ref: '#/components/schemas/chains'
       required:
@@ -607,7 +725,21 @@ components:
       type: object
       properties:
         summary: 
-          $ref: '#/components/schemas/summary_items'
+          allOf:
+            - $ref: '#/components/schemas/summary_items'
+          properties:
+            uniprot_start:
+              type: integer
+              description: >
+                1-indexed first residue of the model according to UniProt sequence
+                numbering
+              example: 1
+            uniprot_end:
+              type: integer
+              description: >
+                1-indexed last residue of the model according to UniProt sequence
+                numbering
+              example: 142
       required:
         - summary
     summary_items:
@@ -682,18 +814,6 @@ components:
             Sequence identity in the range of [0,1] of the model to the UniProt
             sequence
           example: 0.97
-        uniprot_start:
-          type: integer
-          description: >
-            1-indexed first residue of the model according to UniProt sequence
-            numbering
-          example: 1
-        uniprot_end:
-          type: integer
-          description: >
-            1-indexed last residue of the model according to UniProt sequence
-            numbering
-          example: 142
         coverage:
           type: number
           description: >
@@ -1109,3 +1229,29 @@ components:
         - end
         - modelCategory
         - modelType
+    status:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status of the service
+          enum:
+            - pass
+            - warn
+            - fail
+          example: pass
+        serviceId:
+          type: string
+          description: The identifier of the service
+          example: pdbe
+        version:
+          type: string
+          description: The version of the service
+          example: 2.6.0
+        output:
+          type: string
+          description: Raw error output, in case of "fail" or "warn" states.
+      required:
+        - status
+        - serviceId
+        - version
