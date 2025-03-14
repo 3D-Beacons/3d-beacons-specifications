@@ -58,6 +58,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/uniprot_details'
+        '404':
+          description: >-
+            Response returns an empty JSON object `{}` to indicate no data is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
   '/uniprot/summary/{qualifier}.json':
     get:
       description: |
@@ -104,6 +112,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/uniprot_summary'
+        '404':
+          description: >-
+            Response returns an empty JSON object `{}` to indicate no data is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
   '/uniprot/summary':
     post:
       requestBody:
@@ -122,6 +138,14 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/uniprot_summary'
+        '404':
+          description: >-
+            Response returns an empty JSON object `{}` to indicate no data is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
   '/uniprot/annotations/{accession}.json':
     get:
       parameters:
@@ -154,6 +178,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/annotations'
+        '404':
+          description: >-
+            Response returns an empty JSON object `{}` to indicate no data is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
   '/pdb/summary/{qualifier}-{chain}.json':
     get:
       parameters:
@@ -199,6 +231,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/pdb_summary'
+        '404':
+          description: >-
+            Response returns an empty JSON object `{}` to indicate no data is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
   '/ensembl/summary/{qualifier}.json':
     get:
       parameters:
@@ -239,6 +279,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ensembl_summary'
+        '404':
+          description: >-
+            Response returns an empty JSON object `{}` to indicate no data is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
   '/metadata/{qualifier}.json':
     get:
       parameters:
@@ -257,6 +305,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/metadata'
+        '404':
+          description: >-
+            Response returns an empty JSON object `{}` to indicate no data is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
   '/sequence/summary':
     get:
       description: |
@@ -291,6 +347,14 @@ paths:
               schema:
                 type: object
                 $ref: '#/components/schemas/sequence_summary'
+        '404':
+          description: >-
+            Response returns an empty JSON object `{}` to indicate no data is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
   '/sequence/search':
     post:
       requestBody:
@@ -362,6 +426,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/message'
+        '404':
+          description: >-
+            Response returns an empty JSON object `{}` to indicate no data is returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}
   /health:
     get:
       summary: Health Check
@@ -388,7 +460,6 @@ paths:
                   serviceId: pdbe
                   version: 2.6.0
                   output: 'Service is unhealthy, not able to reach the backend!'
-
 servers:
   - url: 'https://3dbeacons.org/api/'
     description: 3D Beacons server
@@ -1240,18 +1311,18 @@ components:
             - warn
             - fail
           example: pass
-        serviceId:
+        service_id:
           type: string
-          description: The identifier of the service
+          description: The identifier of the service, corresponds to the provider ID in the registry
           example: pdbe
-        version:
+        beacons_api_version:
           type: string
-          description: The version of the service
-          example: 2.6.0
+          description: The version of the 3DBeacons API
+          example: 2.7.0
         output:
           type: string
           description: Raw error output, in case of "fail" or "warn" states.
       required:
         - status
-        - serviceId
-        - version
+        - service_id
+        - beacons_api_version
