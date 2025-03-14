@@ -457,8 +457,8 @@ paths:
                   $ref: '#/components/schemas/status'
               example:
                 - status: fail
-                  serviceId: pdbe
-                  version: 2.6.0
+                  service_id: pdbe
+                  beacons_api_version: 2.7.0
                   output: 'Service is unhealthy, not able to reach the backend!'
 servers:
   - url: 'https://3dbeacons.org/api/'
