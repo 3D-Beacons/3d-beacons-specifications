@@ -1,3 +1,9 @@
+v2.7.0 - 3 Mar 2025
+
+* Added a new endpoint for health check
+* Added a new endpoint for searching based on a sequence or a checksum
+  This mostly reuses the existing schema for uniprot/summary, except the fields related to UniProt as this could support non-UniProt sequences.
+
 v2.6.0 - 25 Oct 2024
 
 * Added support for searching by UniProt sequence checksum for both summary and details endpoints to allow for more flexible searching
