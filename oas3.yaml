@@ -168,7 +168,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/annotation_type'
-
       responses:
         '200':
           description: >-
@@ -345,7 +344,6 @@ paths:
           content:
             application/json:
               schema:
-                type: object
                 $ref: '#/components/schemas/sequence_summary'
         '404':
           description: >-
@@ -434,7 +432,7 @@ paths:
               schema:
                 type: object
                 example: {}
-  /health:
+  '/health':
     get:
       summary: Health Check
       description: Returns the health status of all the beacons.
@@ -668,8 +666,6 @@ components:
       type: object
       properties:
         entry:
-          type: object
-          description: A query sequence
           $ref: '#/components/schemas/entry'
         structures:
           type: array
@@ -1200,7 +1196,6 @@ components:
             properties:
               type:
                 $ref: '#/components/schemas/annotation_type'
-                example: ACT_SITE
               description:
                 type: string
                 description: Label for an annotation
