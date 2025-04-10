@@ -678,9 +678,7 @@ components:
       type: object
       properties:
         summary:
-          type: array
-          items:
-            $ref: '#/components/schemas/summary_items'
+          $ref: '#/components/schemas/summary_items'
       required:
         - summary
     entry:
