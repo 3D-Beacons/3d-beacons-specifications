@@ -1,3 +1,7 @@
+v2.7.1 - 10 Apr 2025
+
+* Fix - Corrected the sequence summary specification by changing the "summary" field from a list to an object, as a structure does not have multiple summaries.
+
 v2.7.0 - 3 Mar 2025
 
 * Added a new endpoint for health check
